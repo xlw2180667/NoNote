@@ -1,0 +1,15 @@
+/* 
+  Localizable.strings
+  NoNote
+
+  Created by Xie Liwei on 15/07/2018.
+  Copyright © 2018 Xie Liwei. All rights reserved.
+*/
+
+"#write" = "Write";
+"#now" = "Now";
+"#oops" = "Oops";
+"#cannotConnectToICloud" = "Cannot connect to your iCloud, please check your connection. You can still use NoDiary without iCloud connection. All Your diaries will be saved on your phone. But you will lose them if you deleted the app or when your disk is full.";
+"#saveToICloundError" = "Cannot connect to your iCloud, please check your connection. Your diary is saved to your phone.";
+"#ok" = "OK";
+"#dontShowAlert" = "Don‘t Show Again";

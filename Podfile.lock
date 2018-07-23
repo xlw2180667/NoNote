@@ -1,0 +1,26 @@
+PODS:
+  - FSCalendar (2.7.9)
+  - NVActivityIndicatorView (4.2.1):
+    - NVActivityIndicatorView/Presenter (= 4.2.1)
+  - NVActivityIndicatorView/Presenter (4.2.1)
+  - SwiftDate (5.0.0)
+
+DEPENDENCIES:
+  - FSCalendar
+  - NVActivityIndicatorView
+  - SwiftDate (~> 5.0.0)
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - FSCalendar
+    - NVActivityIndicatorView
+    - SwiftDate
+
+SPEC CHECKSUMS:
+  FSCalendar: a04b09f16f811bc92e82f3cf852a15225233b9d5
+  NVActivityIndicatorView: 8068ba3ad39cb44cbaab25d89ff2546b3f092681
+  SwiftDate: 1efb57cf6a7657fdbd00c3b80d5f724bbca6428d
+
+PODFILE CHECKSUM: 951fab9db58e11e0931e08b7d8ad502b988b73a9
+
+COCOAPODS: 1.5.2

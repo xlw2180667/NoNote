@@ -1,0 +1,15 @@
+/* 
+  Localizable.strings
+  NoNote
+
+  Created by Xie Liwei on 15/07/2018.
+  Copyright © 2018 Xie Liwei. All rights reserved.
+*/
+
+"#write" = "写";
+"#now" = "今";
+"#oops" = "哎呀";
+"#cannotConnectToICloud" = "无法连接到您的iCloud，请检查您的连接。如果您不希望使用iCloud服务，您仍然可以使用NoDiary，您的日记会被储存在手机硬盘内。但如果您删除了NoDiary或者硬盘空间不足时，您会丢失您的日记。";
+"#saveToICloundError" = "无法连接到您的iCloud，请检查您的连接。您的日记已保存到本地硬盘。";
+"#ok" = "好的";
+"#dontShowAlert" = "不再显示";
