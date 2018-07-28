@@ -13,3 +13,4 @@
 "#saveToICloundError" = "Cannot connect to your iCloud, please check your connection. Your diary is saved to your phone.";
 "#ok" = "OK";
 "#dontShowAlert" = "Don‘t Show Again";
+"#delete" = "Delete";

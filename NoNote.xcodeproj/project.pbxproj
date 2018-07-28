@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6E1B63D7210D21BE004BC611 /* ICloudManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1B63D6210D21BE004BC611 /* ICloudManager.swift */; };
 		6E535DDF20FA854C00996470 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E535DDE20FA854C00996470 /* AppDelegate.swift */; };
 		6E535DE420FA854C00996470 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E535DE220FA854C00996470 /* Main.storyboard */; };
 		6E535DE620FA854D00996470 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6E535DE520FA854D00996470 /* Assets.xcassets */; };
@@ -29,6 +30,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6E1B63D6210D21BE004BC611 /* ICloudManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudManager.swift; sourceTree = "<group>"; };
 		6E535DDB20FA854C00996470 /* NoDiary.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NoDiary.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6E535DDE20FA854C00996470 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6E535DE320FA854C00996470 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -84,6 +86,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		6E1B63D5210D219A004BC611 /* iCloud */ = {
+			isa = PBXGroup;
+			children = (
+				6E1B63D6210D21BE004BC611 /* ICloudManager.swift */,
+			);
+			path = iCloud;
+			sourceTree = "<group>";
+		};
 		6E535DD220FA854C00996470 = {
 			isa = PBXGroup;
 			children = (
@@ -114,6 +124,7 @@
 				6EC666EC20FA8C2A00827A26 /* ViewController */,
 				6EC666EA20FA8C1200827A26 /* Core */,
 				6EC6670D20FB2E5A00827A26 /* Helper */,
+				6E1B63D5210D219A004BC611 /* iCloud */,
 				6E5A823B20FB35A400BD43F4 /* Language */,
 				6EC666EB20FA8C2200827A26 /* Resource */,
 			);
@@ -319,6 +330,7 @@
 				6EC6671220FB2EEB00827A26 /* NoNoteColor.swift in Sources */,
 				6EC666E920FA85EE00827A26 /* CalendarViewController.swift in Sources */,
 				6EC6670C20FAC24400827A26 /* CalendarViewController+iClound.swift in Sources */,
+				6E1B63D7210D21BE004BC611 /* ICloudManager.swift in Sources */,
 				6EC666F820FA8E5500827A26 /* NoteViewController.swift in Sources */,
 				6EC6671020FB2E8500827A26 /* AddBlur.swift in Sources */,
 				6E535DDF20FA854C00996470 /* AppDelegate.swift in Sources */,

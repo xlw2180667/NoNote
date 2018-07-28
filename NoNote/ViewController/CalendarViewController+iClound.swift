@@ -20,10 +20,21 @@ extension CalendarViewController {
                 guard let diaries = diaries else { return }
                 for diary in diaries {
                     guard let diaryDate = diary.object(forKey: "diaryDate") as? String,
-                        let diary = diary.object(forKey: "diary") as? String
+                        let diaryString = diary.object(forKey: "diary") as? String
                         else { return }
-                    UserDefaults.standard.set(true, forKey: "\(diaryDate)IsSet")
-                    UserDefaults.standard.set(diary, forKey: "\(diaryDate)")
+                    if let isDelete = diary.object(forKey: "isDeleted") as? String {
+                        if isDelete == "true" {
+                            UserDefaults.standard.removeObject(forKey: "\(diaryDate)IsSet")
+                            UserDefaults.standard.removeObject(forKey: "\(diaryDate)")
+                        } else {
+                            UserDefaults.standard.set(true, forKey: "\(diaryDate)IsSet")
+                            UserDefaults.standard.set(diaryString, forKey: "\(diaryDate)")
+                        }
+                    } else {
+                        UserDefaults.standard.set(true, forKey: "\(diaryDate)IsSet")
+                        UserDefaults.standard.set(diaryString, forKey: "\(diaryDate)")
+                    }
+
                     DispatchQueue.main.async {
                         self.calendar.reloadData()
                     }

@@ -14,6 +14,7 @@ class NoteViewController: UIViewController,UITextViewDelegate {
     @IBOutlet weak var noteTextView: UITextView!
     @IBOutlet weak var indicatorBackgourndView: UIView!
     @IBOutlet weak var indicatorView: NVActivityIndicatorView!
+    @IBOutlet weak var deleteButton: UIButton!
     
     var date: Date?
     let database = CKContainer.default().privateCloudDatabase
@@ -25,8 +26,12 @@ class NoteViewController: UIViewController,UITextViewDelegate {
         setTitle()
         displayDefaultText()
         setupIndicatorView()
+        updateUI()
     }
-    
+    func updateUI() {
+        deleteButton.layer.cornerRadius = 28
+        deleteButton.setTitle(NSLocalizedString("#delete", comment: ""), for: .normal)
+    }
     func setTitle() {
         guard let date = date else { return }
         let formatter = DateFormatter()
@@ -142,6 +147,33 @@ class NoteViewController: UIViewController,UITextViewDelegate {
         alert.addAction(dontShowAgain)
         DispatchQueue.main.async {
             self.present(alert, animated: true, completion: nil)
+        }
+    }
+    
+    @IBAction func deleteDiary(_ sender: Any) {
+        guard let date = date else { return }
+        if noteTextView.text == "" {
+            completedDiary()
+            return
+        }
+        showIndicatorView()
+        if CloudKitManager.appCloudDataBase() == nil {
+            navigationController?.popViewController(animated: true)
+            return
+        }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "M-d-yyyy"
+        let dateString = formatter.string(from: date)
+        UserDefaults.standard.removeObject(forKey: "\(dateString)")
+        UserDefaults.standard.removeObject(forKey: "\(dateString)IsSet")
+        CloudKitManager.checkIfDiaryExsit(date: dateString) { (diaries, hasRecord) in
+            if hasRecord {
+                CloudKitManager.deleteDiaryFromICould(record: diaries![0], completion: {
+                    DispatchQueue.main.async {
+                        self.navigationController?.popViewController(animated: true)
+                    }
+                })
+            }
         }
     }
 }

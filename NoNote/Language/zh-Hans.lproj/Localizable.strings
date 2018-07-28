@@ -13,3 +13,4 @@
 "#saveToICloundError" = "无法连接到您的iCloud，请检查您的连接。您的日记已保存到本地硬盘。";
 "#ok" = "好的";
 "#dontShowAlert" = "不再显示";
+"#delete" = "删";
