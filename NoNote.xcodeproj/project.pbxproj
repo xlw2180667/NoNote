@@ -7,58 +7,44 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6E1B63D7210D21BE004BC611 /* ICloudManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E1B63D6210D21BE004BC611 /* ICloudManager.swift */; };
-		6E535DDF20FA854C00996470 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E535DDE20FA854C00996470 /* AppDelegate.swift */; };
-		6E535DE420FA854C00996470 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E535DE220FA854C00996470 /* Main.storyboard */; };
 		6E535DE620FA854D00996470 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6E535DE520FA854D00996470 /* Assets.xcassets */; };
-		6E535DE920FA854D00996470 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6E535DE720FA854D00996470 /* LaunchScreen.storyboard */; };
-		6E535DF120FA856B00996470 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = 6E535DF020FA856B00996470 /* Podfile */; };
-		6E5A823F20FB35DC00BD43F4 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6E5A824120FB35DC00BD43F4 /* Localizable.strings */; };
-		6EC666E920FA85EE00827A26 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC666E820FA85EE00827A26 /* CalendarViewController.swift */; };
 		6EC666F120FA8C9200827A26 /* Roboto-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6EC666EE20FA8C9100827A26 /* Roboto-Bold.ttf */; };
 		6EC666F220FA8C9200827A26 /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6EC666EF20FA8C9100827A26 /* Roboto-Medium.ttf */; };
 		6EC666F320FA8C9200827A26 /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6EC666F020FA8C9200827A26 /* Roboto-Regular.ttf */; };
-		6EC666F620FA8DB800827A26 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 6E535DEA20FA854D00996470 /* Info.plist */; };
-		6EC666F820FA8E5500827A26 /* NoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC666F720FA8E5500827A26 /* NoteViewController.swift */; };
 		6EC666FD20FAACFC00827A26 /* sheep.png in Resources */ = {isa = PBXBuildFile; fileRef = 6EC666FC20FAACFC00827A26 /* sheep.png */; };
-		6EC6670620FAB39B00827A26 /* SwiftDate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EC6670520FAB39B00827A26 /* SwiftDate.framework */; };
 		6EC6670A20FABD6A00827A26 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6EC6670920FABD6900827A26 /* CloudKit.framework */; };
-		6EC6670C20FAC24400827A26 /* CalendarViewController+iClound.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC6670B20FAC24400827A26 /* CalendarViewController+iClound.swift */; };
-		6EC6671020FB2E8500827A26 /* AddBlur.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC6670F20FB2E8500827A26 /* AddBlur.swift */; };
-		6EC6671220FB2EEB00827A26 /* NoNoteColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EC6671120FB2EEB00827A26 /* NoNoteColor.swift */; };
-		9448621554DD0DDC31B8950A /* Pods_NoNote.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0511AF202B1E3BEE63CFBB9 /* Pods_NoNote.framework */; };
+		B10000000000000000000001 /* NoDiaryApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000001 /* NoDiaryApp.swift */; };
+		B10000000000000000000002 /* DiaryEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000002 /* DiaryEntry.swift */; };
+		B10000000000000000000003 /* CloudKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000003 /* CloudKitService.swift */; };
+		B10000000000000000000004 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000004 /* CalendarView.swift */; };
+		B10000000000000000000005 /* CalendarGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000005 /* CalendarGridView.swift */; };
+		B10000000000000000000006 /* DiaryEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000006 /* DiaryEditorView.swift */; };
+		B10000000000000000000007 /* LoadingOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000007 /* LoadingOverlay.swift */; };
+		B10000000000000000000008 /* AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000008 /* AppColors.swift */; };
+		B10000000000000000000009 /* AppFonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000009 /* AppFonts.swift */; };
+		B1000000000000000000000B /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000000B /* Localizable.xcstrings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		6E1B63D6210D21BE004BC611 /* ICloudManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudManager.swift; sourceTree = "<group>"; };
 		6E535DDB20FA854C00996470 /* NoDiary.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NoDiary.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		6E535DDE20FA854C00996470 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		6E535DE320FA854C00996470 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		6E535DE520FA854D00996470 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		6E535DE820FA854D00996470 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		6E535DEA20FA854D00996470 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		6E535DF020FA856B00996470 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		6E5A823920FB354E00BD43F4 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
-		6E5A823A20FB354E00BD43F4 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
-		6E5A824020FB35DC00BD43F4 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
-		6E5A824420FB361C00BD43F4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
-		6EC666E820FA85EE00827A26 /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 		6EC666EE20FA8C9100827A26 /* Roboto-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Bold.ttf"; sourceTree = "<group>"; };
 		6EC666EF20FA8C9100827A26 /* Roboto-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Medium.ttf"; sourceTree = "<group>"; };
 		6EC666F020FA8C9200827A26 /* Roboto-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Regular.ttf"; sourceTree = "<group>"; };
-		6EC666F720FA8E5500827A26 /* NoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteViewController.swift; sourceTree = "<group>"; };
 		6EC666FC20FAACFC00827A26 /* sheep.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sheep.png; sourceTree = "<group>"; };
 		6EC666FF20FAAEB400827A26 /* NoNote.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NoNote.entitlements; sourceTree = "<group>"; };
-		6EC6670420FAB18300827A26 /* NoNote-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NoNote-Bridging-Header.h"; sourceTree = "<group>"; };
-		6EC6670520FAB39B00827A26 /* SwiftDate.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftDate.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		6EC6670720FAB3C600827A26 /* FSCalendar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FSCalendar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6EC6670920FABD6900827A26 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
-		6EC6670B20FAC24400827A26 /* CalendarViewController+iClound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CalendarViewController+iClound.swift"; sourceTree = "<group>"; };
-		6EC6670F20FB2E8500827A26 /* AddBlur.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddBlur.swift; sourceTree = "<group>"; };
-		6EC6671120FB2EEB00827A26 /* NoNoteColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoNoteColor.swift; sourceTree = "<group>"; };
-		BAE86B1ABC5B6CDEE83ABCE2 /* Pods-NoNote.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoNote.release.xcconfig"; path = "Pods/Target Support Files/Pods-NoNote/Pods-NoNote.release.xcconfig"; sourceTree = "<group>"; };
-		D0511AF202B1E3BEE63CFBB9 /* Pods_NoNote.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NoNote.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		E31BEA814103465EAF3F5944 /* Pods-NoNote.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoNote.debug.xcconfig"; path = "Pods/Target Support Files/Pods-NoNote/Pods-NoNote.debug.xcconfig"; sourceTree = "<group>"; };
+		A10000000000000000000001 /* NoDiaryApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoDiaryApp.swift; sourceTree = "<group>"; };
+		A10000000000000000000002 /* DiaryEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryEntry.swift; sourceTree = "<group>"; };
+		A10000000000000000000003 /* CloudKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitService.swift; sourceTree = "<group>"; };
+		A10000000000000000000004 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		A10000000000000000000005 /* CalendarGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarGridView.swift; sourceTree = "<group>"; };
+		A10000000000000000000006 /* DiaryEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryEditorView.swift; sourceTree = "<group>"; };
+		A10000000000000000000007 /* LoadingOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingOverlay.swift; sourceTree = "<group>"; };
+		A10000000000000000000008 /* AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColors.swift; sourceTree = "<group>"; };
+		A10000000000000000000009 /* AppFonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFonts.swift; sourceTree = "<group>"; };
+		A1000000000000000000000A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A1000000000000000000000B /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,8 +53,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6EC6670A20FABD6A00827A26 /* CloudKit.framework in Frameworks */,
-				6EC6670620FAB39B00827A26 /* SwiftDate.framework in Frameworks */,
-				9448621554DD0DDC31B8950A /* Pods_NoNote.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -79,29 +63,16 @@
 			isa = PBXGroup;
 			children = (
 				6EC6670920FABD6900827A26 /* CloudKit.framework */,
-				6EC6670720FAB3C600827A26 /* FSCalendar.framework */,
-				6EC6670520FAB39B00827A26 /* SwiftDate.framework */,
-				D0511AF202B1E3BEE63CFBB9 /* Pods_NoNote.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		6E1B63D5210D219A004BC611 /* iCloud */ = {
-			isa = PBXGroup;
-			children = (
-				6E1B63D6210D21BE004BC611 /* ICloudManager.swift */,
-			);
-			path = iCloud;
 			sourceTree = "<group>";
 		};
 		6E535DD220FA854C00996470 = {
 			isa = PBXGroup;
 			children = (
-				6E535DF020FA856B00996470 /* Podfile */,
 				6E535DE520FA854D00996470 /* Assets.xcassets */,
 				6E535DDD20FA854C00996470 /* NoNote */,
 				6E535DDC20FA854C00996470 /* Products */,
-				E4B1871BAFFE11B3230ECE0C /* Pods */,
 				1E702CF9F8D389FEF4D51BAC /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -117,35 +88,17 @@
 		6E535DDD20FA854C00996470 /* NoNote */ = {
 			isa = PBXGroup;
 			children = (
-				6EC6670420FAB18300827A26 /* NoNote-Bridging-Header.h */,
 				6EC666FF20FAAEB400827A26 /* NoNote.entitlements */,
 				6EC666FC20FAACFC00827A26 /* sheep.png */,
-				6EC666ED20FA8C3700827A26 /* Storyboard */,
-				6EC666EC20FA8C2A00827A26 /* ViewController */,
-				6EC666EA20FA8C1200827A26 /* Core */,
-				6EC6670D20FB2E5A00827A26 /* Helper */,
-				6E1B63D5210D219A004BC611 /* iCloud */,
-				6E5A823B20FB35A400BD43F4 /* Language */,
+				C10000000000000000000001 /* App */,
+				C10000000000000000000002 /* Models */,
+				C10000000000000000000003 /* Services */,
+				C10000000000000000000004 /* Views */,
+				C10000000000000000000005 /* Theme */,
+				C10000000000000000000006 /* Localization */,
 				6EC666EB20FA8C2200827A26 /* Resource */,
 			);
 			path = NoNote;
-			sourceTree = "<group>";
-		};
-		6E5A823B20FB35A400BD43F4 /* Language */ = {
-			isa = PBXGroup;
-			children = (
-				6E5A824120FB35DC00BD43F4 /* Localizable.strings */,
-			);
-			path = Language;
-			sourceTree = "<group>";
-		};
-		6EC666EA20FA8C1200827A26 /* Core */ = {
-			isa = PBXGroup;
-			children = (
-				6E535DEA20FA854D00996470 /* Info.plist */,
-				6E535DDE20FA854C00996470 /* AppDelegate.swift */,
-			);
-			path = Core;
 			sourceTree = "<group>";
 		};
 		6EC666EB20FA8C2200827A26 /* Resource */ = {
@@ -158,41 +111,57 @@
 			path = Resource;
 			sourceTree = "<group>";
 		};
-		6EC666EC20FA8C2A00827A26 /* ViewController */ = {
+		C10000000000000000000001 /* App */ = {
 			isa = PBXGroup;
 			children = (
-				6EC666E820FA85EE00827A26 /* CalendarViewController.swift */,
-				6EC666F720FA8E5500827A26 /* NoteViewController.swift */,
-				6EC6670B20FAC24400827A26 /* CalendarViewController+iClound.swift */,
+				A10000000000000000000001 /* NoDiaryApp.swift */,
+				A1000000000000000000000A /* Info.plist */,
 			);
-			path = ViewController;
+			path = App;
 			sourceTree = "<group>";
 		};
-		6EC666ED20FA8C3700827A26 /* Storyboard */ = {
+		C10000000000000000000002 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				6E535DE220FA854C00996470 /* Main.storyboard */,
-				6E535DE720FA854D00996470 /* LaunchScreen.storyboard */,
+				A10000000000000000000002 /* DiaryEntry.swift */,
 			);
-			path = Storyboard;
+			path = Models;
 			sourceTree = "<group>";
 		};
-		6EC6670D20FB2E5A00827A26 /* Helper */ = {
+		C10000000000000000000003 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				6EC6670F20FB2E8500827A26 /* AddBlur.swift */,
-				6EC6671120FB2EEB00827A26 /* NoNoteColor.swift */,
+				A10000000000000000000003 /* CloudKitService.swift */,
 			);
-			path = Helper;
+			path = Services;
 			sourceTree = "<group>";
 		};
-		E4B1871BAFFE11B3230ECE0C /* Pods */ = {
+		C10000000000000000000004 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				E31BEA814103465EAF3F5944 /* Pods-NoNote.debug.xcconfig */,
-				BAE86B1ABC5B6CDEE83ABCE2 /* Pods-NoNote.release.xcconfig */,
+				A10000000000000000000004 /* CalendarView.swift */,
+				A10000000000000000000005 /* CalendarGridView.swift */,
+				A10000000000000000000006 /* DiaryEditorView.swift */,
+				A10000000000000000000007 /* LoadingOverlay.swift */,
 			);
-			name = Pods;
+			path = Views;
+			sourceTree = "<group>";
+		};
+		C10000000000000000000005 /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000008 /* AppColors.swift */,
+				A10000000000000000000009 /* AppFonts.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		C10000000000000000000006 /* Localization */ = {
+			isa = PBXGroup;
+			children = (
+				A1000000000000000000000B /* Localizable.xcstrings */,
+			);
+			path = Localization;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -202,11 +171,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6E535DED20FA854D00996470 /* Build configuration list for PBXNativeTarget "NoDiary" */;
 			buildPhases = (
-				6DD1AE45150746197FA92A10 /* [CP] Check Pods Manifest.lock */,
 				6E535DD720FA854C00996470 /* Sources */,
 				6E535DD820FA854C00996470 /* Frameworks */,
 				6E535DD920FA854C00996470 /* Resources */,
-				81686766B2B468A297D6BDD1 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -229,7 +196,6 @@
 				TargetAttributes = {
 					6E535DDA20FA854C00996470 = {
 						CreatedOnToolsVersion = 9.4.1;
-						LastSwiftMigration = 0940;
 						SystemCapabilities = {
 							com.apple.Push = {
 								enabled = 1;
@@ -248,6 +214,7 @@
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
 			);
 			mainGroup = 6E535DD220FA854C00996470;
 			productRefGroup = 6E535DDC20FA854C00996470 /* Products */;
@@ -264,110 +231,35 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6EC666F620FA8DB800827A26 /* Info.plist in Resources */,
-				6E535DE920FA854D00996470 /* LaunchScreen.storyboard in Resources */,
 				6EC666F320FA8C9200827A26 /* Roboto-Regular.ttf in Resources */,
 				6E535DE620FA854D00996470 /* Assets.xcassets in Resources */,
 				6EC666F220FA8C9200827A26 /* Roboto-Medium.ttf in Resources */,
-				6E5A823F20FB35DC00BD43F4 /* Localizable.strings in Resources */,
 				6EC666F120FA8C9200827A26 /* Roboto-Bold.ttf in Resources */,
-				6E535DF120FA856B00996470 /* Podfile in Resources */,
-				6E535DE420FA854C00996470 /* Main.storyboard in Resources */,
 				6EC666FD20FAACFC00827A26 /* sheep.png in Resources */,
+				B1000000000000000000000B /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		6DD1AE45150746197FA92A10 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-NoNote-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		81686766B2B468A297D6BDD1 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-NoNote/Pods-NoNote-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/FSCalendar/FSCalendar.framework",
-				"${BUILT_PRODUCTS_DIR}/NVActivityIndicatorView/NVActivityIndicatorView.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftDate/SwiftDate.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FSCalendar.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/NVActivityIndicatorView.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftDate.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-NoNote/Pods-NoNote-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		6E535DD720FA854C00996470 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6EC6671220FB2EEB00827A26 /* NoNoteColor.swift in Sources */,
-				6EC666E920FA85EE00827A26 /* CalendarViewController.swift in Sources */,
-				6EC6670C20FAC24400827A26 /* CalendarViewController+iClound.swift in Sources */,
-				6E1B63D7210D21BE004BC611 /* ICloudManager.swift in Sources */,
-				6EC666F820FA8E5500827A26 /* NoteViewController.swift in Sources */,
-				6EC6671020FB2E8500827A26 /* AddBlur.swift in Sources */,
-				6E535DDF20FA854C00996470 /* AppDelegate.swift in Sources */,
+				B10000000000000000000001 /* NoDiaryApp.swift in Sources */,
+				B10000000000000000000002 /* DiaryEntry.swift in Sources */,
+				B10000000000000000000003 /* CloudKitService.swift in Sources */,
+				B10000000000000000000004 /* CalendarView.swift in Sources */,
+				B10000000000000000000005 /* CalendarGridView.swift in Sources */,
+				B10000000000000000000006 /* DiaryEditorView.swift in Sources */,
+				B10000000000000000000007 /* LoadingOverlay.swift in Sources */,
+				B10000000000000000000008 /* AppColors.swift in Sources */,
+				B10000000000000000000009 /* AppFonts.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXVariantGroup section */
-		6E535DE220FA854C00996470 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				6E535DE320FA854C00996470 /* Base */,
-				6E5A823920FB354E00BD43F4 /* zh-Hans */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		6E535DE720FA854D00996470 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				6E535DE820FA854D00996470 /* Base */,
-				6E5A823A20FB354E00BD43F4 /* zh-Hans */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
-		};
-		6E5A824120FB35DC00BD43F4 /* Localizable.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				6E5A824020FB35DC00BD43F4 /* zh-Hans */,
-				6E5A824420FB361C00BD43F4 /* Base */,
-			);
-			name = Localizable.strings;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		6E535DEB20FA854D00996470 /* Debug */ = {
@@ -422,15 +314,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_INSTALL_OBJC_HEADER = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "./NoNote/NoNote-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 			};
 			name = Debug;
 		};
@@ -480,64 +369,57 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_INSTALL_OBJC_HEADER = YES;
-				SWIFT_OBJC_BRIDGING_HEADER = "./NoNote/NoNote-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_PRECOMPILE_BRIDGING_HEADER = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
 		6E535DEE20FA854D00996470 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E31BEA814103465EAF3F5944 /* Pods-NoNote.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = NoNote/NoNote.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = BMM986A3RM;
-				INFOPLIST_FILE = "$(SRCROOT)/NoNote/Core/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/NoNote/App/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.12;
 				PRODUCT_BUNDLE_IDENTIFIER = greenCross.NoDiary;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "";
-				SWIFT_OBJC_INTERFACE_HEADER_NAME = "$(SWIFT_MODULE_NAME)-Swift.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Debug;
 		};
 		6E535DEF20FA854D00996470 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BAE86B1ABC5B6CDEE83ABCE2 /* Pods-NoNote.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = NoNote/NoNote.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = BMM986A3RM;
-				INFOPLIST_FILE = "$(SRCROOT)/NoNote/Core/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/NoNote/App/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.12;
 				PRODUCT_BUNDLE_IDENTIFIER = greenCross.NoDiary;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "";
-				SWIFT_OBJC_INTERFACE_HEADER_NAME = "$(SWIFT_MODULE_NAME)-Swift.h";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Release;
 		};
