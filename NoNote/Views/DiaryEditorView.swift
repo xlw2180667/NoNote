@@ -204,6 +204,17 @@ struct DiaryEditorView: View {
         .onDisappear {
             saveIfNeeded()
         }
+        .onChange(of: cloudKit.diaryText(for: date)) { newText in
+            // Update editor when iCloud sync brings new data, but only if user has no local edits
+            guard !hasChanges, !hasSaved else { return }
+            text = newText
+            originalText = newText
+        }
+        .onChange(of: cloudKit.diaryMood(for: date)) { newMood in
+            guard !hasChanges, !hasSaved else { return }
+            mood = newMood
+            originalMood = newMood
+        }
         .onChange(of: selectedPhotoItems) { newItems in
             Task {
                 for item in newItems {
@@ -252,20 +263,23 @@ struct DiaryEditorView: View {
     private var photoSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             if !photoItems.isEmpty {
-                LazyVGrid(columns: photoGridColumns, spacing: 8) {
-                    ForEach(photoItems) { item in
-                        photoCell(item: item)
-                            .transition(.opacity.combined(with: .scale(scale: 0.8)))
-                            .opacity(draggingItem?.id == item.id ? 0.5 : 1.0)
-                            .onDrag {
-                                draggingItem = item
-                                return NSItemProvider(object: item.id.uuidString as NSString)
-                            }
-                            .onDrop(of: [UTType.text], delegate: PhotoDropDelegate(
-                                item: item,
-                                items: $photoItems,
-                                draggingItem: $draggingItem
-                            ))
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(photoItems) { item in
+                            photoCell(item: item)
+                                .frame(width: 80, height: 80)
+                                .transition(.opacity.combined(with: .scale(scale: 0.8)))
+                                .opacity(draggingItem?.id == item.id ? 0.5 : 1.0)
+                                .onDrag {
+                                    draggingItem = item
+                                    return NSItemProvider(object: item.id.uuidString as NSString)
+                                }
+                                .onDrop(of: [UTType.text], delegate: PhotoDropDelegate(
+                                    item: item,
+                                    items: $photoItems,
+                                    draggingItem: $draggingItem
+                                ))
+                        }
                     }
                 }
             }
@@ -321,14 +335,19 @@ struct DiaryEditorView: View {
         }
     }
 
+    private var hasContent: Bool {
+        !text.isEmpty || mood != nil || !photoItems.isEmpty
+    }
+
     private func saveIfNeeded() {
-        guard !hasSaved, hasChanges, !text.isEmpty else { return }
+        guard !hasSaved, hasChanges, hasContent else { return }
         performSave()
     }
 
     private func manualSave() {
-        guard hasChanges, !text.isEmpty else { return }
+        guard hasChanges, hasContent else { return }
         performSave()
+        hasSaved = false  // Allow future saves (onDisappear) if user edits more after manual save
     }
 
     private func performSave() {
@@ -339,11 +358,14 @@ struct DiaryEditorView: View {
         originalText = text
         originalMood = mood
         originalPhotoURLs = photoItems.compactMap(\.sourceURL)
-        // Skip photo save if photos haven't loaded yet (they're unchanged on disk)
-        guard !isLoadingPhotos else { return }
-        // Build photo sources: fullImage for new, sourceURL for existing
-        let sources: [(image: UIImage?, url: URL?)] = photoItems.map { item in
-            (image: item.fullImage, url: item.sourceURL)
+        // Build photo sources
+        let sources: [(image: UIImage?, url: URL?)]
+        if isLoadingPhotos {
+            // Photos still loading — use existing cached URLs (unchanged on disk)
+            let cachedURLs = cloudKit.diaryCacheEntry(for: date)?.photoFileURLs ?? []
+            sources = cachedURLs.map { (image: nil, url: $0) }
+        } else {
+            sources = photoItems.map { (image: $0.fullImage, url: $0.sourceURL) }
         }
         cloudKit.saveInBackground(text: text, date: date, mood: mood, photoSources: sources)
     }

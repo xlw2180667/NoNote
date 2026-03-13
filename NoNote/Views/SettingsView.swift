@@ -22,6 +22,21 @@ struct SettingsView: View {
                     .font(.custom(AppFonts.regular, size: 16))
                     .foregroundColor(.textPrimary)
             }
+
+            #if DEBUG
+            Section("Debug") {
+                Button(action: { cloudKit.generateTestData() }) {
+                    Label("Generate Test Data", systemImage: "wand.and.stars")
+                        .font(.custom(AppFonts.regular, size: 16))
+                        .foregroundColor(.accent)
+                }
+                Button(action: { cloudKit.clearTestData() }) {
+                    Label("Clear Test Data", systemImage: "trash")
+                        .font(.custom(AppFonts.regular, size: 16))
+                        .foregroundColor(.danger)
+                }
+            }
+            #endif
         }
         .scrollContentBackground(.hidden)
         .background(Color.surface)

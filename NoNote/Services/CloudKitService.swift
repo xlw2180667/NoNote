@@ -35,6 +35,7 @@ final class CloudKitService: ObservableObject {
         self.diaryCache = cached
         self.diaryDates = Set(cached.keys)
         SharedDataStore.update(from: self)
+        uploadPendingEntries()
     }
 
     // MARK: - Read Helpers
@@ -69,6 +70,8 @@ final class CloudKitService: ObservableObject {
         for (_, result) in results {
             if let record = try? result.get() {
                 let entry = DiaryEntry(record: record)
+                // Skip entries pending local upload to avoid overwriting unsaved changes
+                if diaryCache[entry.diaryDate]?.needsUpload == true { continue }
                 if entry.isDeleted {
                     diaryDates.remove(entry.diaryDate)
                     diaryCache.removeValue(forKey: entry.diaryDate)
@@ -106,6 +109,7 @@ final class CloudKitService: ObservableObject {
         var cacheEntry = diaryCache[dateString] ?? DiaryCacheEntry(text: text)
         cacheEntry.text = text
         cacheEntry.mood = mood
+        cacheEntry.needsUpload = true
         diaryCache[dateString] = cacheEntry
         persistLocally()
     }
@@ -118,17 +122,19 @@ final class CloudKitService: ObservableObject {
         let dateString = dateKey(from: date)
 
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            // Heavy work off main thread: load full-res from disk + JPEG compression
+            // Step 1: Read ALL images into memory BEFORE deleting anything
+            var allImages: [UIImage] = []
+            for source in photoSources {
+                let img = source.image ?? source.url.flatMap { UIImage(contentsOfFile: $0.path) }
+                if let img { allImages.append(img) }
+            }
+
+            // Step 2: Now safe to delete old files and re-save
             PhotoCacheService.deleteAll(for: dateString)
             var urls: [URL] = []
-            var allImages: [UIImage] = []
-            for (index, source) in photoSources.enumerated() {
-                let img = source.image ?? source.url.flatMap { UIImage(contentsOfFile: $0.path) }
-                if let img {
-                    allImages.append(img)
-                    if let url = PhotoCacheService.save(image: img, for: dateString, at: index) {
-                        urls.append(url)
-                    }
+            for (index, img) in allImages.enumerated() {
+                if let url = PhotoCacheService.save(image: img, for: dateString, at: index) {
+                    urls.append(url)
                 }
             }
 
@@ -139,7 +145,52 @@ final class CloudKitService: ObservableObject {
                 SharedDataStore.update(from: self)
 
                 Task {
-                    try? await self.saveDiaryToCloud(text: text, date: date, mood: mood, photos: allImages)
+                    do {
+                        try await self.saveDiaryToCloud(text: text, date: date, mood: mood, photos: allImages)
+                        self.diaryCache[dateString]?.needsUpload = false
+                        self.persistLocally()
+                        print("CloudKit: saved \(dateString) (mood: \(mood ?? "nil"), photos: \(allImages.count))")
+                    } catch {
+                        print("CloudKit: save failed for \(dateString) — \(error)")
+                        // needsUpload stays true — will retry on next launch
+                    }
+                }
+            }
+        }
+    }
+
+    // MARK: - Retry Pending Uploads
+
+    private func uploadPendingEntries() {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "M-d-yyyy"
+
+        let pending = diaryCache.filter { $0.value.needsUpload }
+        if !pending.isEmpty {
+            print("CloudKit: retrying \(pending.count) pending upload(s)")
+        }
+
+        for (dateString, entry) in pending {
+            guard let date = formatter.date(from: dateString) else { continue }
+            let text = entry.text
+            let mood = entry.mood
+            let photoURLs = entry.photoFileURLs
+
+            // Load images off main thread to avoid UI freeze
+            DispatchQueue.global(qos: .utility).async { [weak self] in
+                let images: [UIImage] = photoURLs.compactMap { UIImage(contentsOfFile: $0.path) }
+                DispatchQueue.main.async {
+                    guard let self else { return }
+                    Task {
+                        do {
+                            try await self.saveDiaryToCloud(text: text, date: date, mood: mood, photos: images)
+                            self.diaryCache[dateString]?.needsUpload = false
+                            self.persistLocally()
+                            print("CloudKit: retry succeeded for \(dateString)")
+                        } catch {
+                            print("CloudKit: retry failed for \(dateString) — \(error)")
+                        }
+                    }
                 }
             }
         }
@@ -226,9 +277,11 @@ final class CloudKitService: ObservableObject {
                 let entry = DiaryEntry(record: record)
                 if !entry.isDeleted {
                     found.append((dateString: entry.diaryDate, text: entry.diary))
-                    // Also update local cache
-                    diaryDates.insert(entry.diaryDate)
-                    diaryCache[entry.diaryDate] = DiaryCacheEntry(text: entry.diary, mood: entry.mood)
+                    // Also update local cache, but respect pending uploads
+                    if diaryCache[entry.diaryDate]?.needsUpload != true {
+                        diaryDates.insert(entry.diaryDate)
+                        diaryCache[entry.diaryDate] = DiaryCacheEntry(text: entry.diary, mood: entry.mood)
+                    }
                 }
             }
         }
@@ -241,6 +294,60 @@ final class CloudKitService: ObservableObject {
     private func persistLocally() {
         LocalStorageService.saveDiaryCache(diaryCache)
     }
+
+    // MARK: - Debug Test Data
+
+    #if DEBUG
+    func generateTestData() {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "M-d-yyyy"
+        let cal = Calendar.current
+        let today = Date()
+
+        let moods = ["happy", "good", "neutral", "sad", "happy", "good", "happy"]
+        let texts = [
+            "Had a wonderful brunch with friends today. The weather was perfect and we sat outside enjoying the sunshine. ☀️",
+            "Finished reading that book I've been working on. Really inspiring story about perseverance.",
+            "Normal day at work. Nothing special happened but it was peaceful and productive.",
+            "Rainy day. Stayed home and cooked a big pot of soup. The apartment smells amazing now.",
+            "Great workout this morning! Hit a new personal record. Feeling strong and energized. 💪",
+            "Went to the farmer's market and got the most beautiful flowers and fresh vegetables.",
+            "Movie night with the family. We laughed so much watching that comedy together. 🎬",
+            "Tried a new coffee shop downtown. Their latte art was incredible!",
+            "Spent the afternoon in the park sketching. The cherry blossoms are starting to bloom. 🌸",
+            "Cleaned the whole apartment today. It feels so refreshing to have a tidy space.",
+            "Had a deep conversation with an old friend. Some friendships just pick up where they left off.",
+            "Cooked a new recipe — homemade pasta from scratch. Messy but delicious! 🍝",
+            "Discovered a lovely little bookshop tucked away in a side street. Bought three books.",
+            "Morning yoga session followed by a quiet walk along the river. Perfect start to the day.",
+            "Game night! Played board games until midnight. So competitive but so fun. 🎲",
+        ]
+
+        // Generate entries for the past 25 days
+        for i in 0..<25 {
+            // Skip some days to look natural
+            if i == 3 || i == 7 || i == 12 || i == 18 || i == 22 { continue }
+
+            guard let date = cal.date(byAdding: .day, value: -i, to: today) else { continue }
+            let dateString = formatter.string(from: date)
+            let mood = moods[i % moods.count]
+            let text = texts[i % texts.count]
+
+            diaryDates.insert(dateString)
+            diaryCache[dateString] = DiaryCacheEntry(text: text, mood: mood)
+        }
+
+        persistLocally()
+        SharedDataStore.update(from: self)
+    }
+
+    func clearTestData() {
+        diaryDates.removeAll()
+        diaryCache.removeAll()
+        persistLocally()
+        SharedDataStore.update(from: self)
+    }
+    #endif
 
     // MARK: - Private Helpers
 
