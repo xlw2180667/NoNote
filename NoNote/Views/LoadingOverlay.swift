@@ -7,7 +7,7 @@ struct LoadingOverlay: View {
                 .ignoresSafeArea()
 
             ProgressView()
-                .progressViewStyle(CircularProgressViewStyle(tint: .noDiaryGreen))
+                .progressViewStyle(CircularProgressViewStyle(tint: .accent))
                 .scaleEffect(1.5)
                 .padding(40)
                 .background(.ultraThinMaterial)

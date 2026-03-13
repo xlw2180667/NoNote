@@ -7,6 +7,16 @@ struct DiaryEntry: Identifiable {
     let diaryDayAndMonth: String
     var diary: String
     var isDeleted: Bool
+    var mood: String?
+    var photoAssets: [CKAsset]
+    var legacyPhotoAsset: CKAsset?
+
+    /// Returns photos from the new `photos` field, falling back to legacy single `photo`.
+    var allPhotoAssets: [CKAsset] {
+        if !photoAssets.isEmpty { return photoAssets }
+        if let legacy = legacyPhotoAsset { return [legacy] }
+        return []
+    }
 
     init(record: CKRecord) {
         self.id = record.recordID
@@ -15,5 +25,8 @@ struct DiaryEntry: Identifiable {
         self.diary = record["diary"] as? String ?? ""
         let deletedString = record["isDeleted"] as? String ?? "false"
         self.isDeleted = deletedString == "true"
+        self.mood = record["mood"] as? String
+        self.photoAssets = record["photos"] as? [CKAsset] ?? []
+        self.legacyPhotoAsset = record["photo"] as? CKAsset
     }
 }
