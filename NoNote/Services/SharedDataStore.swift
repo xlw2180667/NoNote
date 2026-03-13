@@ -25,6 +25,10 @@ enum SharedDataStore {
         defaults.set(entry?.mood ?? "", forKey: "todayMood")
         defaults.set(StatsService.currentStreak(dates: cloudKit.diaryDates), forKey: "currentStreak")
         defaults.set(entry?.photoFileURLs.count ?? 0, forKey: "todayPhotoCount")
+        let flock = FlockService.computeFlockState(diaryDates: cloudKit.diaryDates)
+        defaults.set(flock.allUnlocked.count, forKey: "sheepCount")
+        defaults.set(flock.isAwake, forKey: "sheepAwake")
+        defaults.set(UserDefaults.standard.bool(forKey: "appLockEnabled"), forKey: "appLockEnabled")
         defaults.set(Date(), forKey: "lastUpdated")
 
         updateWidgetThumbnail(photoURLs: entry?.photoFileURLs ?? [])
@@ -48,6 +52,14 @@ enum SharedDataStore {
 
     static var todayPhotoCount: Int {
         defaults?.integer(forKey: "todayPhotoCount") ?? 0
+    }
+
+    static var sheepCount: Int {
+        defaults?.integer(forKey: "sheepCount") ?? 0
+    }
+
+    static var sheepAwake: Bool {
+        defaults?.bool(forKey: "sheepAwake") ?? false
     }
 
     // MARK: - Thumbnail

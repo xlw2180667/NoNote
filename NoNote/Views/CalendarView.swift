@@ -66,6 +66,7 @@ struct CalendarView: View {
             VStack(spacing: 12) {
                 topBar
                 StreakBadgeView(diaryDates: cloudKit.diaryDates)
+                FlockBannerView(diaryDates: cloudKit.diaryDates)
                 calendarCard(dayCellHeight: 40)
                 diarySection
                 Spacer()
@@ -90,6 +91,7 @@ struct CalendarView: View {
                 VStack(spacing: 12) {
                     topBar
                     StreakBadgeView(diaryDates: cloudKit.diaryDates)
+                    FlockBannerView(diaryDates: cloudKit.diaryDates)
                     calendarCard(dayCellHeight: 48)
                     diarySection
                     Spacer()

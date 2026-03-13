@@ -11,7 +11,7 @@ struct Provider: TimelineProvider {
     }
 
     func placeholder(in context: Context) -> DiaryWidgetEntry {
-        DiaryWidgetEntry(date: Date(), diaryText: "Today's diary...", mood: "🐑", streak: 3, photoCount: 0, thumbnail: nil)
+        DiaryWidgetEntry(date: Date(), diaryText: "Today's diary...", mood: "🐑", streak: 3, photoCount: 0, thumbnail: nil, sheepCount: 2, sheepAwake: true, isLocked: false)
     }
 
     func getSnapshot(in context: Context, completion: @escaping (DiaryWidgetEntry) -> Void) {
@@ -28,13 +28,17 @@ struct Provider: TimelineProvider {
     }
 
     private func currentEntry() -> DiaryWidgetEntry {
-        DiaryWidgetEntry(
+        let locked = defaults?.bool(forKey: "appLockEnabled") ?? false
+        return DiaryWidgetEntry(
             date: Date(),
             diaryText: defaults?.string(forKey: "todayDiaryText") ?? "",
             mood: defaults?.string(forKey: "todayMood") ?? "",
             streak: defaults?.integer(forKey: "currentStreak") ?? 0,
             photoCount: defaults?.integer(forKey: "todayPhotoCount") ?? 0,
-            thumbnail: loadThumbnail()
+            thumbnail: locked ? nil : loadThumbnail(),
+            sheepCount: defaults?.integer(forKey: "sheepCount") ?? 0,
+            sheepAwake: defaults?.bool(forKey: "sheepAwake") ?? false,
+            isLocked: locked
         )
     }
 
@@ -54,6 +58,9 @@ struct DiaryWidgetEntry: TimelineEntry {
     let streak: Int
     let photoCount: Int
     let thumbnail: UIImage?
+    let sheepCount: Int
+    let sheepAwake: Bool
+    let isLocked: Bool
 
     var hasEntry: Bool { !diaryText.isEmpty }
     var displayMood: String { mood.isEmpty ? "🐑" : mood }
@@ -79,7 +86,9 @@ struct NoDiaryWidgetEntryView: View {
 
     private var smallView: some View {
         VStack(spacing: 6) {
-            if entry.hasEntry {
+            if entry.isLocked {
+                lockedSmallView
+            } else if entry.hasEntry {
                 HStack {
                     moodView(size: 32)
                     Spacer()
@@ -100,21 +109,70 @@ struct NoDiaryWidgetEntryView: View {
 
                 Spacer(minLength: 0)
 
-                if entry.streak > 0 {
-                    streakLabel
-                }
+                bottomBar
             } else {
-                Spacer(minLength: 0)
-                Text("🐑")
-                    .font(.system(size: 40))
-                Text("Write today's diary")
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-                Spacer(minLength: 0)
+                emptySmallView
             }
         }
         .padding(2)
+    }
+
+    private var lockedSmallView: some View {
+        VStack(spacing: 6) {
+            HStack {
+                if entry.sheepCount > 0 {
+                    sheepCountBadge
+                }
+                Spacer()
+                Image(systemName: "lock.fill")
+                    .font(.system(size: 12))
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer(minLength: 0)
+
+            if entry.sheepCount > 0 {
+                SheepMoodIcon(mood: entry.sheepAwake ? "good" : "neutral", size: 40)
+            } else {
+                Text("🐑")
+                    .font(.system(size: 40))
+            }
+
+            if entry.hasEntry {
+                Text("Diary written today")
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(.secondary)
+            } else {
+                Text("Write today's diary")
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer(minLength: 0)
+
+            bottomBar
+        }
+    }
+
+    private var emptySmallView: some View {
+        VStack(spacing: 6) {
+            if entry.sheepCount > 0 {
+                HStack {
+                    sheepCountBadge
+                    Spacer()
+                }
+            }
+            Spacer(minLength: 0)
+            SheepMoodIcon(mood: entry.sheepAwake ? "good" : "neutral", size: 40)
+            Text("Write today's diary")
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+            Spacer(minLength: 0)
+            if entry.streak > 0 {
+                streakLabel
+            }
+        }
     }
 
     // MARK: Medium
@@ -126,60 +184,115 @@ struct NoDiaryWidgetEntryView: View {
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(.primary)
                 Spacer()
-                if entry.hasEntry {
+                if entry.isLocked {
+                    Image(systemName: "lock.fill")
+                        .font(.system(size: 12))
+                        .foregroundStyle(.secondary)
+                } else if entry.hasEntry {
                     moodView(size: 22)
                 }
             }
 
-            if entry.hasEntry {
-                HStack(alignment: .top, spacing: 10) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(entry.diaryText)
-                            .font(.system(size: 14))
-                            .foregroundStyle(.secondary)
-                            .lineLimit(3)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-
-                        Spacer(minLength: 0)
-
-                        HStack(spacing: 8) {
-                            if entry.streak > 0 {
-                                streakLabel
-                            }
-                            if entry.photoCount > 1 {
-                                photoCountLabel
-                            }
-                        }
-                    }
-
-                    if entry.hasPhotos, let thumb = entry.thumbnail {
-                        Image(uiImage: thumb)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 64, height: 64)
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                    }
-                }
+            if entry.isLocked {
+                lockedMediumContent
+            } else if entry.hasEntry {
+                unlockMediumContent
             } else {
-                Spacer(minLength: 0)
-                HStack {
-                    Spacer()
-                    VStack(spacing: 4) {
-                        Text("🐑")
-                            .font(.system(size: 32))
-                        Text("Tap to write today's diary")
-                            .font(.system(size: 13, weight: .medium))
-                            .foregroundStyle(.secondary)
-                    }
-                    Spacer()
-                }
-                Spacer(minLength: 0)
+                emptyMediumContent
             }
         }
         .padding(2)
     }
 
+    private var lockedMediumContent: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 6) {
+                if entry.hasEntry {
+                    Text("Diary written today")
+                        .font(.system(size: 14))
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text("Tap to write today's diary")
+                        .font(.system(size: 14))
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer(minLength: 0)
+
+                HStack(spacing: 8) {
+                    if entry.streak > 0 { streakLabel }
+                    if entry.sheepCount > 0 { sheepCountBadge }
+                }
+            }
+
+            Spacer()
+
+            SheepMoodIcon(mood: entry.sheepAwake ? "good" : "neutral", size: 48)
+        }
+    }
+
+    private var unlockMediumContent: some View {
+        HStack(alignment: .top, spacing: 10) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(entry.diaryText)
+                    .font(.system(size: 14))
+                    .foregroundStyle(.secondary)
+                    .lineLimit(3)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                Spacer(minLength: 0)
+
+                HStack(spacing: 8) {
+                    if entry.streak > 0 { streakLabel }
+                    if entry.sheepCount > 0 { sheepCountBadge }
+                    if entry.photoCount > 1 { photoCountLabel }
+                }
+            }
+
+            if entry.hasPhotos, let thumb = entry.thumbnail {
+                Image(uiImage: thumb)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 64, height: 64)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+            }
+        }
+    }
+
+    private var emptyMediumContent: some View {
+        VStack {
+            Spacer(minLength: 0)
+            HStack {
+                Spacer()
+                VStack(spacing: 4) {
+                    SheepMoodIcon(mood: entry.sheepAwake ? "good" : "neutral", size: 32)
+                    Text("Tap to write today's diary")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+            }
+            Spacer(minLength: 0)
+            if entry.streak > 0 || entry.sheepCount > 0 {
+                HStack(spacing: 8) {
+                    Spacer()
+                    if entry.streak > 0 { streakLabel }
+                    if entry.sheepCount > 0 { sheepCountBadge }
+                    Spacer()
+                }
+            }
+        }
+    }
+
     // MARK: Shared
+
+    private var bottomBar: some View {
+        HStack(spacing: 6) {
+            if entry.streak > 0 { streakLabel }
+            Spacer()
+            if entry.sheepCount > 0 && !entry.isLocked { sheepCountBadge }
+        }
+    }
 
     @ViewBuilder
     private func moodView(size: CGFloat) -> some View {
@@ -200,6 +313,16 @@ struct NoDiaryWidgetEntryView: View {
                 .font(.system(size: 11))
                 .foregroundStyle(.orange)
             Text("\(entry.streak) days")
+                .font(.system(size: 11, weight: .medium))
+                .foregroundStyle(.secondary)
+        }
+    }
+
+    private var sheepCountBadge: some View {
+        HStack(spacing: 3) {
+            Text("🐑")
+                .font(.system(size: 10))
+            Text("\(entry.sheepCount)")
                 .font(.system(size: 11, weight: .medium))
                 .foregroundStyle(.secondary)
         }
@@ -244,13 +367,15 @@ struct NoDiaryWidget: Widget {
 #Preview(as: .systemSmall) {
     NoDiaryWidget()
 } timeline: {
-    DiaryWidgetEntry(date: .now, diaryText: "Had a wonderful day at the park with friends.", mood: "😊", streak: 5, photoCount: 3, thumbnail: nil)
-    DiaryWidgetEntry(date: .now, diaryText: "", mood: "", streak: 0, photoCount: 0, thumbnail: nil)
+    DiaryWidgetEntry(date: .now, diaryText: "Had a wonderful day at the park.", mood: "good", streak: 5, photoCount: 1, thumbnail: nil, sheepCount: 3, sheepAwake: true, isLocked: false)
+    DiaryWidgetEntry(date: .now, diaryText: "Had a wonderful day at the park.", mood: "good", streak: 5, photoCount: 0, thumbnail: nil, sheepCount: 3, sheepAwake: true, isLocked: true)
+    DiaryWidgetEntry(date: .now, diaryText: "", mood: "", streak: 0, photoCount: 0, thumbnail: nil, sheepCount: 2, sheepAwake: false, isLocked: false)
 }
 
 #Preview(as: .systemMedium) {
     NoDiaryWidget()
 } timeline: {
-    DiaryWidgetEntry(date: .now, diaryText: "Had a wonderful day at the park with friends. The weather was perfect.", mood: "😊", streak: 5, photoCount: 3, thumbnail: nil)
-    DiaryWidgetEntry(date: .now, diaryText: "", mood: "", streak: 0, photoCount: 0, thumbnail: nil)
+    DiaryWidgetEntry(date: .now, diaryText: "Had a wonderful day at the park with friends. The weather was perfect.", mood: "good", streak: 5, photoCount: 3, thumbnail: nil, sheepCount: 3, sheepAwake: true, isLocked: false)
+    DiaryWidgetEntry(date: .now, diaryText: "Had a wonderful day at the park.", mood: "good", streak: 5, photoCount: 0, thumbnail: nil, sheepCount: 3, sheepAwake: true, isLocked: true)
+    DiaryWidgetEntry(date: .now, diaryText: "", mood: "", streak: 0, photoCount: 0, thumbnail: nil, sheepCount: 0, sheepAwake: false, isLocked: false)
 }

@@ -39,7 +39,14 @@
 		B1000000000000000000001A /* ExportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000001A /* ExportView.swift */; };
 		B1000000000000000000001B /* LocalStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000001B /* LocalStorageService.swift */; };
 		B1000000000000000000001C /* SheepMoodIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000001C /* SheepMoodIcon.swift */; };
+		B1000000000000000000001D /* BiometricAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000001D /* BiometricAuthService.swift */; };
 		B1000000000000000000001E /* SheepMoodIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000001C /* SheepMoodIcon.swift */; };
+		B1000000000000000000001F /* LockScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000001E /* LockScreenView.swift */; };
+		B10000000000000000000020 /* SecuritySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000001F /* SecuritySettingsView.swift */; };
+		B10000000000000000000021 /* FlockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000020 /* FlockService.swift */; };
+		B10000000000000000000022 /* FlockSheepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000021 /* FlockSheepView.swift */; };
+		B10000000000000000000023 /* FlockBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000022 /* FlockBannerView.swift */; };
+		B10000000000000000000024 /* FlockDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000023 /* FlockDetailView.swift */; };
 		DC09999B2F634FA600FE7A6F /* SheepCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = DC09999A2F634FA600FE7A6F /* SheepCalendar */; };
 		DC0999A32F6409B800FE7A6F /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC0999A22F6409B700FE7A6F /* WidgetKit.framework */; };
 		DC0999A52F6409B800FE7A6F /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC0999A42F6409B800FE7A6F /* SwiftUI.framework */; };
@@ -106,6 +113,13 @@
 		A1000000000000000000001A /* ExportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportView.swift; sourceTree = "<group>"; };
 		A1000000000000000000001B /* LocalStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStorageService.swift; sourceTree = "<group>"; };
 		A1000000000000000000001C /* SheepMoodIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheepMoodIcon.swift; sourceTree = "<group>"; };
+		A1000000000000000000001D /* BiometricAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricAuthService.swift; sourceTree = "<group>"; };
+		A1000000000000000000001E /* LockScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenView.swift; sourceTree = "<group>"; };
+		A1000000000000000000001F /* SecuritySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecuritySettingsView.swift; sourceTree = "<group>"; };
+		A10000000000000000000020 /* FlockService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlockService.swift; sourceTree = "<group>"; };
+		A10000000000000000000021 /* FlockSheepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlockSheepView.swift; sourceTree = "<group>"; };
+		A10000000000000000000022 /* FlockBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlockBannerView.swift; sourceTree = "<group>"; };
+		A10000000000000000000023 /* FlockDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlockDetailView.swift; sourceTree = "<group>"; };
 		DC09999C2F63FE4F00FE7A6F /* SheepCalendar */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = SheepCalendar; path = ../SheepCalendar; sourceTree = SOURCE_ROOT; };
 		DC0999A12F6409B700FE7A6F /* NoDiaryWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NoDiaryWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC0999A22F6409B700FE7A6F /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -228,7 +242,9 @@
 		C10000000000000000000003 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				A1000000000000000000001D /* BiometricAuthService.swift */,
 				A10000000000000000000003 /* CloudKitService.swift */,
+				A10000000000000000000020 /* FlockService.swift */,
 				A10000000000000000000010 /* StatsService.swift */,
 				A10000000000000000000011 /* NotificationService.swift */,
 				A10000000000000000000012 /* ExportService.swift */,
@@ -247,10 +263,15 @@
 				A1000000000000000000000C /* DiaryPreviewCard.swift */,
 				A1000000000000000000000D /* EmptyStateView.swift */,
 				A1000000000000000000001A /* ExportView.swift */,
+				A10000000000000000000022 /* FlockBannerView.swift */,
+				A10000000000000000000023 /* FlockDetailView.swift */,
+				A10000000000000000000021 /* FlockSheepView.swift */,
 				A10000000000000000000007 /* LoadingOverlay.swift */,
+				A1000000000000000000001E /* LockScreenView.swift */,
 				A10000000000000000000018 /* MonthlyStatsView.swift */,
 				A10000000000000000000017 /* MoodPickerRow.swift */,
 				A10000000000000000000019 /* ReminderSettingsView.swift */,
+				A1000000000000000000001F /* SecuritySettingsView.swift */,
 				A1000000000000000000001C /* SheepMoodIcon.swift */,
 				A10000000000000000000016 /* SearchView.swift */,
 				A10000000000000000000015 /* SettingsView.swift */,
@@ -420,6 +441,13 @@
 				B10000000000000000000019 /* ReminderSettingsView.swift in Sources */,
 				B1000000000000000000001A /* ExportView.swift in Sources */,
 				B1000000000000000000001C /* SheepMoodIcon.swift in Sources */,
+				B1000000000000000000001D /* BiometricAuthService.swift in Sources */,
+				B1000000000000000000001F /* LockScreenView.swift in Sources */,
+				B10000000000000000000020 /* SecuritySettingsView.swift in Sources */,
+				B10000000000000000000021 /* FlockService.swift in Sources */,
+				B10000000000000000000022 /* FlockSheepView.swift in Sources */,
+				B10000000000000000000023 /* FlockBannerView.swift in Sources */,
+				B10000000000000000000024 /* FlockDetailView.swift in Sources */,
 				B10000000000000000000008 /* AppColors.swift in Sources */,
 				B10000000000000000000009 /* AppFonts.swift in Sources */,
 			);

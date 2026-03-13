@@ -298,41 +298,43 @@ final class CloudKitService: ObservableObject {
     // MARK: - Debug Test Data
 
     #if DEBUG
-    func generateTestData() {
+    private let debugMoods = ["happy", "good", "neutral", "sad", "happy", "good", "happy"]
+    private let debugTexts = [
+        "Had a wonderful brunch with friends today. ☀️",
+        "Finished reading that book. Really inspiring.",
+        "Normal day at work. Peaceful and productive.",
+        "Rainy day. Stayed home and cooked soup.",
+        "Great workout this morning! New personal record. 💪",
+        "Went to the farmer's market. Beautiful flowers.",
+        "Movie night with the family. 🎬",
+        "Tried a new coffee shop downtown.",
+        "Sketching in the park. Cherry blossoms blooming. 🌸",
+        "Cleaned the whole apartment today.",
+        "Deep conversation with an old friend.",
+        "Homemade pasta from scratch. Delicious! 🍝",
+        "Discovered a lovely little bookshop.",
+        "Morning yoga. Quiet walk along the river.",
+        "Game night! Board games until midnight. 🎲",
+    ]
+
+    /// Generate test entries: `count` consecutive days ending today (streak = count).
+    /// If `breakStreak` is true, skip today so sheep are sleeping.
+    func generateTestData(count: Int = 20, breakStreak: Bool = false) {
         let formatter = DateFormatter()
         formatter.dateFormat = "M-d-yyyy"
         let cal = Calendar.current
         let today = Date()
 
-        let moods = ["happy", "good", "neutral", "sad", "happy", "good", "happy"]
-        let texts = [
-            "Had a wonderful brunch with friends today. The weather was perfect and we sat outside enjoying the sunshine. ☀️",
-            "Finished reading that book I've been working on. Really inspiring story about perseverance.",
-            "Normal day at work. Nothing special happened but it was peaceful and productive.",
-            "Rainy day. Stayed home and cooked a big pot of soup. The apartment smells amazing now.",
-            "Great workout this morning! Hit a new personal record. Feeling strong and energized. 💪",
-            "Went to the farmer's market and got the most beautiful flowers and fresh vegetables.",
-            "Movie night with the family. We laughed so much watching that comedy together. 🎬",
-            "Tried a new coffee shop downtown. Their latte art was incredible!",
-            "Spent the afternoon in the park sketching. The cherry blossoms are starting to bloom. 🌸",
-            "Cleaned the whole apartment today. It feels so refreshing to have a tidy space.",
-            "Had a deep conversation with an old friend. Some friendships just pick up where they left off.",
-            "Cooked a new recipe — homemade pasta from scratch. Messy but delicious! 🍝",
-            "Discovered a lovely little bookshop tucked away in a side street. Bought three books.",
-            "Morning yoga session followed by a quiet walk along the river. Perfect start to the day.",
-            "Game night! Played board games until midnight. So competitive but so fun. 🎲",
-        ]
+        diaryDates.removeAll()
+        diaryCache.removeAll()
 
-        // Generate entries for the past 25 days
-        for i in 0..<25 {
-            // Skip some days to look natural
-            if i == 3 || i == 7 || i == 12 || i == 18 || i == 22 { continue }
-
+        // Build a consecutive streak of `count` days ending at today (or yesterday if breakStreak)
+        let startOffset = breakStreak ? 1 : 0
+        for i in startOffset..<(count + startOffset) {
             guard let date = cal.date(byAdding: .day, value: -i, to: today) else { continue }
             let dateString = formatter.string(from: date)
-            let mood = moods[i % moods.count]
-            let text = texts[i % texts.count]
-
+            let mood = debugMoods[i % debugMoods.count]
+            let text = debugTexts[i % debugTexts.count]
             diaryDates.insert(dateString)
             diaryCache[dateString] = DiaryCacheEntry(text: text, mood: mood)
         }

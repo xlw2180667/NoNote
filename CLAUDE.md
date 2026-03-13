@@ -17,11 +17,13 @@ NoNote/
 ├── App/            NoDiaryApp.swift, Info.plist
 ├── Models/         DiaryEntry.swift (CKRecord wrapper), DiaryCacheEntry.swift
 ├── Services/       CloudKitService.swift, StatsService.swift, NotificationService.swift,
-│                   ExportService.swift, PhotoCacheService.swift, SharedDataStore.swift
+│                   ExportService.swift, PhotoCacheService.swift, SharedDataStore.swift,
+│                   FlockService.swift
 ├── Views/          CalendarView, DiaryEditorView, DiaryPreviewCard,
 │                   EmptyStateView, StreakBadgeView, LoadingOverlay,
 │                   SettingsView, SearchView, MoodPickerRow,
-│                   MonthlyStatsView, ReminderSettingsView, ExportView
+│                   MonthlyStatsView, ReminderSettingsView, ExportView,
+│                   FlockBannerView, FlockDetailView, FlockSheepView
 ├── Theme/          AppColors.swift (adaptive light/dark), AppFonts.swift (Roboto)
 ├── Localization/   Localizable.xcstrings (en + zh-Hans)
 └── Resource/       Roboto-Bold/Medium/Regular.ttf
@@ -48,7 +50,7 @@ xcodebuild -project NoNote.xcodeproj -scheme NoDiary \
 
 ## Xcode Project File
 
-New `.swift` files use IDs in the `A1000000000000000000000X` / `B1000000000000000000000X` pattern in `project.pbxproj`. Next available: `A1000000000000000000001D` / `B1000000000000000000001D`. Group IDs: Models `C10000000000000000000002`, Services `C10000000000000000000003`, Views `C10000000000000000000004`.
+New `.swift` files use IDs in the `A1000000000000000000000X` / `B1000000000000000000000X` pattern in `project.pbxproj`. Next available: `A10000000000000000000024` / `B10000000000000000000025`. Group IDs: Models `C10000000000000000000002`, Services `C10000000000000000000003`, Views `C10000000000000000000004`.
 
 ## Future Features (Prioritized)
 
