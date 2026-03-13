@@ -49,3 +49,23 @@ xcodebuild -project NoNote.xcodeproj -scheme NoDiary \
 ## Xcode Project File
 
 New `.swift` files use IDs in the `A1000000000000000000000X` / `B1000000000000000000000X` pattern in `project.pbxproj`. Next available: `A1000000000000000000001D` / `B1000000000000000000001D`. Group IDs: Models `C10000000000000000000002`, Services `C10000000000000000000003`, Views `C10000000000000000000004`.
+
+## Future Features (Prioritized)
+
+### High Priority
+1. **FaceID / Passcode Lock** — App lock on launch, toggle in Settings
+2. **Daily Writing Prompts** — Random prompt in empty editor, can be disabled
+
+### Medium Priority
+3. **"On This Day" Memories** — Show diary from same date in previous years on app open
+4. **Sheep Flock Growth** — Visual sheep farm that grows with writing streaks (7d = new sheep, 30d = special sheep, break = sheep sleeps)
+
+### Lower Priority
+5. **Yearly Wrapped** — Year-end summary card: entry count, longest streak, mood chart, top keywords. Shareable.
+6. **Auto Weather** — Record weather on save, show icon on calendar and preview card
+
+## Notes
+
+- Old Mac app (AppKit, `~/Documents/work/private/NoDiary`) is deprecated — iOS version runs on Mac via iPad layout
+- CloudKit production schema: `mood` (String) and `photos` (Asset List) fields were manually added and deployed
+- Privacy policy: https://smartkiitos.com/nodairy/privacy/

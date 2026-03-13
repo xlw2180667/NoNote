@@ -23,6 +23,12 @@ struct SettingsView: View {
                     .foregroundColor(.textPrimary)
             }
 
+            Link(destination: URL(string: "https://smartkiitos.com/nodairy/privacy/")!) {
+                Label(String(localized: "#privacyPolicy"), systemImage: "hand.raised")
+                    .font(.custom(AppFonts.regular, size: 16))
+                    .foregroundColor(.textPrimary)
+            }
+
             #if DEBUG
             Section("Debug") {
                 Button(action: { cloudKit.generateTestData() }) {
