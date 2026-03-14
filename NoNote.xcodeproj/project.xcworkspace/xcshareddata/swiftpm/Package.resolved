@@ -1,0 +1,15 @@
+{
+  "originHash" : "ecf6b92dd3fe56ee6eff41909206d16b9dbe686ba3c93a061184f1239633e4cb",
+  "pins" : [
+    {
+      "identity" : "sheepcalendar",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/xlw2180667/SheepCalendar.git",
+      "state" : {
+        "revision" : "baaee77a59fd24216dd3ed508772b167b0b6bcc1",
+        "version" : "0.1.1"
+      }
+    }
+  ],
+  "version" : 3
+}

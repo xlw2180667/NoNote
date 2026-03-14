@@ -47,6 +47,9 @@
 		B10000000000000000000022 /* FlockSheepView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000021 /* FlockSheepView.swift */; };
 		B10000000000000000000023 /* FlockBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000022 /* FlockBannerView.swift */; };
 		B10000000000000000000024 /* FlockDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000023 /* FlockDetailView.swift */; };
+		B10000000000000000000025 /* WritingPromptService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000024 /* WritingPromptService.swift */; };
+		B10000000000000000000026 /* WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000025 /* WeatherService.swift */; };
+		B10000000000000000000027 /* WeatherPickerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000026 /* WeatherPickerRow.swift */; };
 		DC09999B2F634FA600FE7A6F /* SheepCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = DC09999A2F634FA600FE7A6F /* SheepCalendar */; };
 		DC0999A32F6409B800FE7A6F /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC0999A22F6409B700FE7A6F /* WidgetKit.framework */; };
 		DC0999A52F6409B800FE7A6F /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC0999A42F6409B800FE7A6F /* SwiftUI.framework */; };
@@ -120,7 +123,9 @@
 		A10000000000000000000021 /* FlockSheepView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlockSheepView.swift; sourceTree = "<group>"; };
 		A10000000000000000000022 /* FlockBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlockBannerView.swift; sourceTree = "<group>"; };
 		A10000000000000000000023 /* FlockDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlockDetailView.swift; sourceTree = "<group>"; };
-		DC09999C2F63FE4F00FE7A6F /* SheepCalendar */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = SheepCalendar; path = ../SheepCalendar; sourceTree = SOURCE_ROOT; };
+		A10000000000000000000024 /* WritingPromptService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WritingPromptService.swift; sourceTree = "<group>"; };
+		A10000000000000000000025 /* WeatherService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherService.swift; sourceTree = "<group>"; };
+		A10000000000000000000026 /* WeatherPickerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherPickerRow.swift; sourceTree = "<group>"; };
 		DC0999A12F6409B700FE7A6F /* NoDiaryWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NoDiaryWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC0999A22F6409B700FE7A6F /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		DC0999A42F6409B800FE7A6F /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -177,7 +182,6 @@
 			isa = PBXGroup;
 			children = (
 				DC0999F42F6411CE00FE7A6F /* NoDiaryWidgetExtension.entitlements */,
-				DC09999C2F63FE4F00FE7A6F /* SheepCalendar */,
 				6E535DE520FA854D00996470 /* Assets.xcassets */,
 				6E535DDD20FA854C00996470 /* NoNote */,
 				DC0999A62F6409B800FE7A6F /* NoDiaryWidget */,
@@ -251,6 +255,8 @@
 				A10000000000000000000013 /* PhotoCacheService.swift */,
 				A10000000000000000000014 /* SharedDataStore.swift */,
 				A1000000000000000000001B /* LocalStorageService.swift */,
+				A10000000000000000000024 /* WritingPromptService.swift */,
+				A10000000000000000000025 /* WeatherService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -276,6 +282,7 @@
 				A10000000000000000000016 /* SearchView.swift */,
 				A10000000000000000000015 /* SettingsView.swift */,
 				A1000000000000000000000E /* StreakBadgeView.swift */,
+				A10000000000000000000026 /* WeatherPickerRow.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -448,6 +455,9 @@
 				B10000000000000000000022 /* FlockSheepView.swift in Sources */,
 				B10000000000000000000023 /* FlockBannerView.swift in Sources */,
 				B10000000000000000000024 /* FlockDetailView.swift in Sources */,
+				B10000000000000000000025 /* WritingPromptService.swift in Sources */,
+				B10000000000000000000026 /* WeatherService.swift in Sources */,
+				B10000000000000000000027 /* WeatherPickerRow.swift in Sources */,
 				B10000000000000000000008 /* AppColors.swift in Sources */,
 				B10000000000000000000009 /* AppFonts.swift in Sources */,
 			);
@@ -751,7 +761,7 @@
 			repositoryURL = "https://github.com/xlw2180667/SheepCalendar.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.0;
+				minimumVersion = 0.1.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

@@ -8,6 +8,7 @@ struct DiaryEntry: Identifiable {
     var diary: String
     var isDeleted: Bool
     var mood: String?
+    var weather: String?
     var photoAssets: [CKAsset]
     var legacyPhotoAsset: CKAsset?
 
@@ -26,6 +27,7 @@ struct DiaryEntry: Identifiable {
         let deletedString = record["isDeleted"] as? String ?? "false"
         self.isDeleted = deletedString == "true"
         self.mood = record["mood"] as? String
+        self.weather = record["weather"] as? String
         self.photoAssets = record["photos"] as? [CKAsset] ?? []
         self.legacyPhotoAsset = record["photo"] as? CKAsset
     }

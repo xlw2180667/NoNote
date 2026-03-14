@@ -4,6 +4,7 @@ struct DiaryPreviewCard: View {
     let date: Date
     let diaryText: String
     var mood: String? = nil
+    var weather: String? = nil
     var photoURLs: [URL] = []
 
     private var dateString: String {
@@ -29,6 +30,12 @@ struct DiaryPreviewCard: View {
                 } else if let mood = mood {
                     Text(mood)
                         .font(.system(size: 16))
+                }
+
+                if let code = weather {
+                    Image(systemName: WeatherCondition.symbolForCode(code))
+                        .font(.system(size: 14))
+                        .foregroundColor(WeatherCondition.colorForCode(code))
                 }
 
                 Spacer()

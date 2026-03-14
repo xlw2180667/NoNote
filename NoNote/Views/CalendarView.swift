@@ -164,6 +164,7 @@ struct CalendarView: View {
         SheepCalendarView(displayedMonth: $displayedMonth, selection: $selection)
             .sheepCalendarFirstWeekday(.monday)
             .sheepCalendarPlaceholder(.fillHeadTail)
+            .sheepCalendarDateRange(max: Date())
             .sheepCalendarTheme(SheepCalendarTheme(
                 selectionColor: .accent,
                 todayColor: .warmAccent,
@@ -199,6 +200,7 @@ struct CalendarView: View {
                 let dateString = dateFormatter.string(from: date)
                 let hasDiary = cloudKit.diaryDates.contains(dateString)
                 let mood = cloudKit.moodForDateString(dateString)
+                let weatherCode = cloudKit.diaryCache[dateString]?.weather
                 VStack(spacing: 1) {
                     Text("\(state.dayNumber)")
                         .font(.custom(AppFonts.medium, size: 14))
@@ -208,21 +210,30 @@ struct CalendarView: View {
                         .clipShape(Circle())
 
                     if hasDiary && state.belongsToDisplayedMonth {
-                        if let mood = mood, SheepMood.isSheepMood(mood) {
-                            SheepMoodIcon(mood: mood, size: 12)
-                        } else if let mood = mood {
-                            Text(mood)
-                                .font(.system(size: 10))
-                                .frame(width: 12, height: 12)
-                        } else {
-                            Image("sheepIcon")
-                                .resizable()
-                                .frame(width: 12, height: 12)
+                        HStack(spacing: 2) {
+                            if let mood = mood, SheepMood.isSheepMood(mood) {
+                                SheepMoodIcon(mood: mood, size: 12)
+                            } else if let mood = mood {
+                                Text(mood)
+                                    .font(.system(size: 10))
+                                    .frame(width: 12, height: 12)
+                            } else {
+                                Image("sheepIcon")
+                                    .resizable()
+                                    .frame(width: 12, height: 12)
+                            }
+                            if let code = weatherCode {
+                                Image(systemName: WeatherCondition.symbolForCode(code))
+                                    .font(.system(size: 8))
+                                    .foregroundColor(WeatherCondition.colorForCode(code))
+                            }
                         }
+                        .frame(height: 12)
                     } else {
                         Color.clear.frame(width: 12, height: 12)
                     }
                 }
+                .opacity(state.isDisabled ? 0.3 : 1.0)
             }
             .onSheepDateSelect { date in
                 selectedDate = date
@@ -245,9 +256,11 @@ struct CalendarView: View {
                         if hSizeClass != .regular { showEditor = true }
                     }
             } else {
-                let mood = cloudKit.diaryMood(for: selectedDate)
-                let photoURLs = cloudKit.diaryCacheEntry(for: selectedDate)?.photoFileURLs ?? []
-                DiaryPreviewCard(date: selectedDate, diaryText: selectedDateDiary, mood: mood, photoURLs: photoURLs)
+                let entry = cloudKit.diaryCacheEntry(for: selectedDate)
+                let mood = entry?.mood
+                let weather = entry?.weather
+                let photoURLs = entry?.photoFileURLs ?? []
+                DiaryPreviewCard(date: selectedDate, diaryText: selectedDateDiary, mood: mood, weather: weather, photoURLs: photoURLs)
                     .onTapGesture {
                         if hSizeClass != .regular { showEditor = true }
                     }

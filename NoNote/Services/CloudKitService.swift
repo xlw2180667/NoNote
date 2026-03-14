@@ -27,15 +27,21 @@ final class CloudKitService: ObservableObject {
     private let database = CKContainer.default().privateCloudDatabase
 
     init() {
-        var cached = LocalStorageService.loadDiaryCache()
-        for (dateString, _) in cached {
-            PhotoCacheService.migrateLegacy(for: dateString)
-            cached[dateString]?.photoFileURLs = PhotoCacheService.photoURLs(for: dateString)
-        }
+        // Load text+mood cache synchronously (fast, no file I/O per entry)
+        let cached = LocalStorageService.loadDiaryCache()
         self.diaryCache = cached
         self.diaryDates = Set(cached.keys)
-        SharedDataStore.update(from: self)
-        uploadPendingEntries()
+
+        // Defer photo migration + widget update + pending uploads to avoid blocking first frame
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            for dateString in self.diaryCache.keys {
+                PhotoCacheService.migrateLegacy(for: dateString)
+                self.diaryCache[dateString]?.photoFileURLs = PhotoCacheService.photoURLs(for: dateString)
+            }
+            SharedDataStore.update(from: self)
+            self.uploadPendingEntries()
+        }
     }
 
     // MARK: - Read Helpers
@@ -77,7 +83,7 @@ final class CloudKitService: ObservableObject {
                     diaryCache.removeValue(forKey: entry.diaryDate)
                 } else {
                     diaryDates.insert(entry.diaryDate)
-                    var cacheEntry = DiaryCacheEntry(text: entry.diary, mood: entry.mood)
+                    var cacheEntry = DiaryCacheEntry(text: entry.diary, mood: entry.mood, weather: entry.weather)
 
                     // Clear old cached photos and re-cache from assets
                     PhotoCacheService.deleteAll(for: entry.diaryDate)
@@ -102,13 +108,14 @@ final class CloudKitService: ObservableObject {
 
     // MARK: - Fast In-Memory Cache Update (no file I/O)
 
-    /// Updates text + mood instantly so CalendarView refreshes before navigation completes.
-    func updateCacheInMemory(text: String, date: Date, mood: String?) {
+    /// Updates text + mood + weather instantly so CalendarView refreshes before navigation completes.
+    func updateCacheInMemory(text: String, date: Date, mood: String?, weather: String?) {
         let dateString = dateKey(from: date)
         diaryDates.insert(dateString)
         var cacheEntry = diaryCache[dateString] ?? DiaryCacheEntry(text: text)
         cacheEntry.text = text
         cacheEntry.mood = mood
+        cacheEntry.weather = weather
         cacheEntry.needsUpload = true
         diaryCache[dateString] = cacheEntry
         persistLocally()
@@ -118,8 +125,9 @@ final class CloudKitService: ObservableObject {
 
     /// Saves photos to disk on a background thread, then syncs to CloudKit.
     /// Each source is (fullImage for new photos, sourceURL for existing photos on disk).
-    func saveInBackground(text: String, date: Date, mood: String?, photoSources: [(image: UIImage?, url: URL?)]) {
+    func saveInBackground(text: String, date: Date, mood: String?, weather: String?, photoSources: [(image: UIImage?, url: URL?)]) {
         let dateString = dateKey(from: date)
+        let hasNewPhotos = photoSources.contains { $0.image != nil }
 
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             // Step 1: Read ALL images into memory BEFORE deleting anything
@@ -129,13 +137,19 @@ final class CloudKitService: ObservableObject {
                 if let img { allImages.append(img) }
             }
 
-            // Step 2: Now safe to delete old files and re-save
-            PhotoCacheService.deleteAll(for: dateString)
-            var urls: [URL] = []
-            for (index, img) in allImages.enumerated() {
-                if let url = PhotoCacheService.save(image: img, for: dateString, at: index) {
-                    urls.append(url)
+            // Step 2: Only delete and re-save local files when photos actually changed
+            var urls: [URL]
+            if hasNewPhotos {
+                PhotoCacheService.deleteAll(for: dateString)
+                urls = []
+                for (index, img) in allImages.enumerated() {
+                    if let url = PhotoCacheService.save(image: img, for: dateString, at: index) {
+                        urls.append(url)
+                    }
                 }
+            } else {
+                // No new photos — keep existing files, just preserve URL order
+                urls = photoSources.compactMap(\.url)
             }
 
             DispatchQueue.main.async {
@@ -146,10 +160,10 @@ final class CloudKitService: ObservableObject {
 
                 Task {
                     do {
-                        try await self.saveDiaryToCloud(text: text, date: date, mood: mood, photos: allImages)
+                        try await self.saveDiaryToCloud(text: text, date: date, mood: mood, weather: weather, photos: allImages)
                         self.diaryCache[dateString]?.needsUpload = false
                         self.persistLocally()
-                        print("CloudKit: saved \(dateString) (mood: \(mood ?? "nil"), photos: \(allImages.count))")
+                        print("CloudKit: saved \(dateString) (mood: \(mood ?? "nil"), weather: \(weather ?? "nil"), photos: \(allImages.count))")
                     } catch {
                         print("CloudKit: save failed for \(dateString) — \(error)")
                         // needsUpload stays true — will retry on next launch
@@ -174,6 +188,7 @@ final class CloudKitService: ObservableObject {
             guard let date = formatter.date(from: dateString) else { continue }
             let text = entry.text
             let mood = entry.mood
+            let weather = entry.weather
             let photoURLs = entry.photoFileURLs
 
             // Load images off main thread to avoid UI freeze
@@ -183,7 +198,7 @@ final class CloudKitService: ObservableObject {
                     guard let self else { return }
                     Task {
                         do {
-                            try await self.saveDiaryToCloud(text: text, date: date, mood: mood, photos: images)
+                            try await self.saveDiaryToCloud(text: text, date: date, mood: mood, weather: weather, photos: images)
                             self.diaryCache[dateString]?.needsUpload = false
                             self.persistLocally()
                             print("CloudKit: retry succeeded for \(dateString)")
@@ -198,7 +213,7 @@ final class CloudKitService: ObservableObject {
 
     // MARK: - CloudKit Sync
 
-    private func saveDiaryToCloud(text: String, date: Date, mood: String?, photos: [UIImage]) async throws {
+    private func saveDiaryToCloud(text: String, date: Date, mood: String?, weather: String?, photos: [UIImage]) async throws {
         let dateString = dateKey(from: date)
         let monthString = monthKey(from: date)
 
@@ -214,6 +229,7 @@ final class CloudKitService: ObservableObject {
             record["diary"] = text
             record["isDeleted"] = "false"
             record["mood"] = mood as CKRecordValue?
+            record["weather"] = weather as CKRecordValue?
             record["photos"] = assets.isEmpty ? nil : assets as CKRecordValue
             record["photo"] = nil
             try await database.save(record)
@@ -223,6 +239,7 @@ final class CloudKitService: ObservableObject {
             record["diaryDayAndMonth"] = monthString
             record["diary"] = text
             record["mood"] = mood as CKRecordValue?
+            record["weather"] = weather as CKRecordValue?
             if !assets.isEmpty {
                 record["photos"] = assets as CKRecordValue
             }
@@ -280,7 +297,7 @@ final class CloudKitService: ObservableObject {
                     // Also update local cache, but respect pending uploads
                     if diaryCache[entry.diaryDate]?.needsUpload != true {
                         diaryDates.insert(entry.diaryDate)
-                        diaryCache[entry.diaryDate] = DiaryCacheEntry(text: entry.diary, mood: entry.mood)
+                        diaryCache[entry.diaryDate] = DiaryCacheEntry(text: entry.diary, mood: entry.mood, weather: entry.weather)
                     }
                 }
             }

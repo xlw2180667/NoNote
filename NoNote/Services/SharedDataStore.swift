@@ -26,7 +26,7 @@ enum SharedDataStore {
         defaults.set(StatsService.currentStreak(dates: cloudKit.diaryDates), forKey: "currentStreak")
         defaults.set(entry?.photoFileURLs.count ?? 0, forKey: "todayPhotoCount")
         let flock = FlockService.computeFlockState(diaryDates: cloudKit.diaryDates)
-        defaults.set(flock.allUnlocked.count, forKey: "sheepCount")
+        defaults.set(flock.sheepCount, forKey: "sheepCount")
         defaults.set(flock.isAwake, forKey: "sheepAwake")
         defaults.set(UserDefaults.standard.bool(forKey: "appLockEnabled"), forKey: "appLockEnabled")
         defaults.set(Date(), forKey: "lastUpdated")

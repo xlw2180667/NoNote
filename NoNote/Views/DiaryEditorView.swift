@@ -59,7 +59,6 @@ struct DiaryEditorView: View {
     @State private var errorMessage = ""
     @State private var showDeleteConfirmation = false
     @FocusState private var isEditorFocused: Bool
-    @State private var hasSaved = false
 
     // Multi-photo state
     @State private var selectedPhotoItems: [PhotosPickerItem] = []
@@ -69,16 +68,19 @@ struct DiaryEditorView: View {
     @State private var isLoadingPhotos = false
 
     // Track original state to detect changes
+    @State private var weather: String? = nil
     @State private var originalText: String = ""
     @State private var originalMood: String? = nil
+    @State private var originalWeather: String? = nil
     @State private var originalPhotoURLs: [URL] = []
+    @AppStorage("writingPromptsEnabled") private var promptsEnabled = true
 
     private var hasExistingEntry: Bool {
         !originalText.isEmpty
     }
 
     private var hasChanges: Bool {
-        if text != originalText || mood != originalMood { return true }
+        if text != originalText || mood != originalMood || weather != originalWeather { return true }
         if isLoadingPhotos { return false }
         if photoItems.contains(where: { $0.sourceURL == nil }) { return true }
         let currentURLs = photoItems.compactMap(\.sourceURL)
@@ -103,13 +105,29 @@ struct DiaryEditorView: View {
                     .padding(.horizontal, 16)
                     .padding(.top, 8)
 
-                // Text editor
-                TextEditor(text: $text)
-                    .font(.custom(AppFonts.regular, size: 16))
-                    .foregroundColor(.textPrimary)
-                    .scrollContentBackground(.hidden)
-                    .focused($isEditorFocused)
-                    .padding()
+                // Weather picker
+                WeatherPickerRow(selectedWeather: $weather)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 4)
+
+                // Text editor with prompt overlay
+                ZStack(alignment: .topLeading) {
+                    TextEditor(text: $text)
+                        .font(.custom(AppFonts.regular, size: 16))
+                        .foregroundColor(.textPrimary)
+                        .scrollContentBackground(.hidden)
+                        .focused($isEditorFocused)
+
+                    if text.isEmpty && !hasExistingEntry && promptsEnabled {
+                        Text(WritingPromptService.promptForDate(date))
+                            .font(.custom(AppFonts.regular, size: 16))
+                            .foregroundColor(.textSecondary.opacity(0.5))
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 8)
+                            .allowsHitTesting(false)
+                    }
+                }
+                .padding()
 
                 // Photo section
                 photoSection
@@ -131,33 +149,18 @@ struct DiaryEditorView: View {
         }
         .navigationTitle(titleString)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                if hSizeClass != .regular {
-                    Button(action: {
-                        saveIfNeeded()
-                        dismiss()
-                    }) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.textPrimary)
-                    }
-                }
-            }
             ToolbarItem(placement: .navigationBarTrailing) {
                 HStack(spacing: 16) {
-                    if hSizeClass == .regular {
-                        Button(action: {
-                            isEditorFocused = false
-                            manualSave()
-                        }) {
-                            Text(String(localized: "#save"))
-                                .font(.custom(AppFonts.medium, size: 16))
-                                .foregroundColor(hasChanges ? .accent : .textSecondary)
-                        }
-                        .disabled(!hasChanges)
+                    Button(action: {
+                        isEditorFocused = false
+                        performSave()
+                    }) {
+                        Text(String(localized: "#save"))
+                            .font(.custom(AppFonts.medium, size: 16))
+                            .foregroundColor(hasChanges && hasContent ? .accent : .textSecondary)
                     }
+                    .disabled(!hasChanges || !hasContent)
                     if hasExistingEntry {
                         Menu {
                             Button(role: .destructive, action: { showDeleteConfirmation = true }) {
@@ -176,11 +179,21 @@ struct DiaryEditorView: View {
             text = cloudKit.diaryText(for: date)
             let entry = cloudKit.diaryCacheEntry(for: date)
             mood = entry?.mood
+            weather = entry?.weather
             let urls = entry?.photoFileURLs ?? []
             originalText = text
             originalMood = mood
+            originalWeather = weather
             originalPhotoURLs = urls
             isEditorFocused = true
+
+            // Pre-fill weather from cached fetch for new entries
+            if weather == nil && !hasExistingEntry {
+                if let code = WeatherService.shared.currentWeatherCode {
+                    weather = code
+                    originalWeather = code
+                }
+            }
 
             // Load photo thumbnails after navigation animation finishes
             if !urls.isEmpty {
@@ -202,16 +215,19 @@ struct DiaryEditorView: View {
             }
         }
         .onDisappear {
-            saveIfNeeded()
+            // iPad: auto-save on date switch since there's no back button
+            if hSizeClass == .regular {
+                saveIfNeeded()
+            }
         }
         .onChange(of: cloudKit.diaryText(for: date)) { newText in
             // Update editor when iCloud sync brings new data, but only if user has no local edits
-            guard !hasChanges, !hasSaved else { return }
+            guard !hasChanges else { return }
             text = newText
             originalText = newText
         }
         .onChange(of: cloudKit.diaryMood(for: date)) { newMood in
-            guard !hasChanges, !hasSaved else { return }
+            guard !hasChanges else { return }
             mood = newMood
             originalMood = newMood
         }
@@ -340,41 +356,37 @@ struct DiaryEditorView: View {
     }
 
     private func saveIfNeeded() {
-        guard !hasSaved, hasChanges, hasContent else { return }
-        performSave()
-    }
-
-    private func manualSave() {
         guard hasChanges, hasContent else { return }
         performSave()
-        hasSaved = false  // Allow future saves (onDisappear) if user edits more after manual save
     }
 
     private func performSave() {
-        hasSaved = true
-        // Instant: update text + mood in memory (no file I/O)
-        cloudKit.updateCacheInMemory(text: text, date: date, mood: mood)
+        guard hasContent else { return }
+        isLoading = true
+        // Update text + mood + weather in memory
+        cloudKit.updateCacheInMemory(text: text, date: date, mood: mood, weather: weather)
         // Update original state so hasChanges resets
         originalText = text
         originalMood = mood
+        originalWeather = weather
         originalPhotoURLs = photoItems.compactMap(\.sourceURL)
         // Build photo sources
         let sources: [(image: UIImage?, url: URL?)]
         if isLoadingPhotos {
-            // Photos still loading — use existing cached URLs (unchanged on disk)
             let cachedURLs = cloudKit.diaryCacheEntry(for: date)?.photoFileURLs ?? []
             sources = cachedURLs.map { (image: nil, url: $0) }
         } else {
             sources = photoItems.map { (image: $0.fullImage, url: $0.sourceURL) }
         }
-        cloudKit.saveInBackground(text: text, date: date, mood: mood, photoSources: sources)
+        cloudKit.saveInBackground(text: text, date: date, mood: mood, weather: weather, photoSources: sources)
+        // Brief loading indicator for user feedback
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            isLoading = false
+        }
     }
 
     private func deleteDiary() {
         isLoading = true
-        // Clear text so onDisappear won't re-save
-        text = ""
-        photoItems = []
         Task {
             do {
                 try await cloudKit.deleteDiary(date: date)

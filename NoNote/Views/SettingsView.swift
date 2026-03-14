@@ -2,9 +2,17 @@ import SwiftUI
 
 struct SettingsView: View {
     @ObservedObject var cloudKit: CloudKitService
+    @AppStorage("writingPromptsEnabled") private var promptsEnabled = true
 
     var body: some View {
         List {
+            Toggle(isOn: $promptsEnabled) {
+                Label(String(localized: "#writingPrompts"), systemImage: "lightbulb")
+                    .font(.custom(AppFonts.regular, size: 16))
+                    .foregroundColor(.textPrimary)
+            }
+            .tint(.accent)
+
             NavigationLink {
                 SecuritySettingsView()
             } label: {

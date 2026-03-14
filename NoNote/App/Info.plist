@@ -15,7 +15,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.0</string>
+	<string>2.1</string>
 	<key>CFBundleVersion</key>
 	<string>5</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -30,6 +30,8 @@
 	<false/>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Unlock your diary with Face ID</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Your location is used to record the weather for your diary entry.</string>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UIRequiredDeviceCapabilities</key>
