@@ -11,6 +11,7 @@ struct NoDiaryApp: App {
 
 struct RootView: View {
     @StateObject private var cloudKit = CloudKitService()
+    @StateObject private var storeService = StoreService()
     @StateObject private var weatherService = WeatherService.shared
     @Environment(\.horizontalSizeClass) private var hSizeClass
     @Environment(\.scenePhase) private var scenePhase
@@ -22,10 +23,10 @@ struct RootView: View {
             if appLockEnabled && !isUnlocked {
                 LockScreenView { isUnlocked = true }
             } else if hSizeClass == .regular {
-                CalendarView(cloudKit: cloudKit)
+                CalendarView(cloudKit: cloudKit, storeService: storeService)
             } else {
                 NavigationStack {
-                    CalendarView(cloudKit: cloudKit)
+                    CalendarView(cloudKit: cloudKit, storeService: storeService)
                 }
             }
         }

@@ -9,11 +9,12 @@ private struct BannerScrollOffsetKey: PreferenceKey {
 
 struct FlockBannerView: View {
     let diaryDates: Set<String>
+    @ObservedObject var storeService: StoreService
     @State private var showDetail = false
     @State private var sheepScrollOffset: CGFloat = 0
 
     private var flockState: FlockState {
-        FlockService.computeFlockState(diaryDates: diaryDates)
+        FlockService.computeFlockState(diaryDates: diaryDates, isPro: storeService.isPro)
     }
 
     private let skyColors = [
@@ -84,17 +85,20 @@ struct FlockBannerView: View {
         }
         .buttonStyle(.plain)
         .sheet(isPresented: $showDetail) {
-            FlockDetailView(diaryDates: diaryDates)
+            FlockDetailView(diaryDates: diaryDates, storeService: storeService)
         }
     }
 
     // MARK: - Sheep Layout
 
     private func bannerSheepLayout(state: FlockState, minWidth: CGFloat) -> some View {
+        let allSheep: [(def: SheepDefinition, ghost: Bool)] =
+            state.activeSheep.map { ($0, false) } + state.ghostSheep.map { ($0, true) }
         let sheepSize: CGFloat = 44
         let hSpacing: CGFloat = sheepSize * 0.3
-        let topRow = stride(from: 0, to: state.sheepCount, by: 2).map { state.sheep[$0] }
-        let bottomRow = stride(from: 1, to: state.sheepCount, by: 2).map { state.sheep[$0] }
+        let totalCount = allSheep.count
+        let topRow = stride(from: 0, to: totalCount, by: 2).map { allSheep[$0] }
+        let bottomRow = stride(from: 1, to: totalCount, by: 2).map { allSheep[$0] }
         let stagger = (sheepSize + hSpacing) / 2
         let topWidth = CGFloat(topRow.count) * (sheepSize + hSpacing)
         let bottomWidth = CGFloat(bottomRow.count) * (sheepSize + hSpacing) + stagger
@@ -103,14 +107,14 @@ struct FlockBannerView: View {
         return VStack(alignment: .leading, spacing: 0) {
             Spacer()
             HStack(spacing: hSpacing) {
-                ForEach(Array(topRow.enumerated()), id: \.element.id) { i, sheep in
-                    FlockSheepView(definition: sheep, isAwake: state.isAwake, size: sheepSize)
+                ForEach(Array(topRow.enumerated()), id: \.element.def.id) { i, item in
+                    FlockSheepView(definition: item.def, isAwake: state.isAwake, size: sheepSize, isGhost: item.ghost)
                         .offset(y: CGFloat(i % 2 == 0 ? -1 : 2))
                 }
             }
             HStack(spacing: hSpacing) {
-                ForEach(Array(bottomRow.enumerated()), id: \.element.id) { i, sheep in
-                    FlockSheepView(definition: sheep, isAwake: state.isAwake, size: sheepSize)
+                ForEach(Array(bottomRow.enumerated()), id: \.element.def.id) { i, item in
+                    FlockSheepView(definition: item.def, isAwake: state.isAwake, size: sheepSize, isGhost: item.ghost)
                         .offset(y: CGFloat(i % 2 == 0 ? 0 : 3))
                 }
             }

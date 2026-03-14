@@ -3,6 +3,7 @@ import SheepCalendar
 
 struct CalendarView: View {
     @ObservedObject var cloudKit: CloudKitService
+    @ObservedObject var storeService: StoreService
     @Environment(\.horizontalSizeClass) private var hSizeClass
     @State private var selectedDate = Date()
     @State private var displayedMonth = Date()
@@ -66,7 +67,7 @@ struct CalendarView: View {
             VStack(spacing: 12) {
                 topBar
                 StreakBadgeView(diaryDates: cloudKit.diaryDates)
-                FlockBannerView(diaryDates: cloudKit.diaryDates)
+                FlockBannerView(diaryDates: cloudKit.diaryDates, storeService: storeService)
                 calendarCard(dayCellHeight: 40)
                 diarySection
                 Spacer()
@@ -91,7 +92,7 @@ struct CalendarView: View {
                 VStack(spacing: 12) {
                     topBar
                     StreakBadgeView(diaryDates: cloudKit.diaryDates)
-                    FlockBannerView(diaryDates: cloudKit.diaryDates)
+                    FlockBannerView(diaryDates: cloudKit.diaryDates, storeService: storeService)
                     calendarCard(dayCellHeight: 48)
                     diarySection
                     Spacer()
@@ -136,7 +137,7 @@ struct CalendarView: View {
             }
 
             NavigationLink {
-                SettingsView(cloudKit: cloudKit)
+                SettingsView(cloudKit: cloudKit, storeService: storeService)
             } label: {
                 Image(systemName: "gearshape")
                     .font(.system(size: 18))

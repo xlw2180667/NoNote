@@ -4,6 +4,7 @@ struct FlockSheepView: View {
     let definition: SheepDefinition
     let isAwake: Bool
     var size: CGFloat = 48
+    var isGhost: Bool = false
     @State private var bobOffset: CGFloat = 0
 
     var body: some View {
@@ -14,16 +15,18 @@ struct FlockSheepView: View {
             .frame(width: size, height: size)
 
             // ZZZ for sleeping sheep
-            if !isAwake {
+            if !isAwake && !isGhost {
                 Text("z z z")
                     .font(.system(size: size * 0.14, weight: .bold))
                     .foregroundColor(.textSecondary.opacity(0.6))
                     .offset(x: size * 0.15, y: -size * 0.38)
             }
         }
+        .saturation(isGhost ? 0 : 1)
+        .opacity(isGhost ? 0.4 : 1)
         .offset(y: bobOffset)
         .onAppear {
-            if isAwake {
+            if isAwake && !isGhost {
                 withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                     bobOffset = -3
                 }

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @ObservedObject var cloudKit: CloudKitService
+    @ObservedObject var storeService: StoreService
     @AppStorage("writingPromptsEnabled") private var promptsEnabled = true
 
     var body: some View {
@@ -37,6 +38,28 @@ struct SettingsView: View {
                 Label(String(localized: "#export"), systemImage: "square.and.arrow.up")
                     .font(.custom(AppFonts.regular, size: 16))
                     .foregroundColor(.textPrimary)
+            }
+
+            if storeService.isPro {
+                Label(String(localized: "#proUnlocked"), systemImage: "checkmark.seal.fill")
+                    .font(.custom(AppFonts.regular, size: 16))
+                    .foregroundColor(.accent)
+            } else {
+                Button {
+                    Task { try? await storeService.purchase() }
+                } label: {
+                    Label(String(localized: "#unlockFullFlock"), systemImage: "sparkles")
+                        .font(.custom(AppFonts.regular, size: 16))
+                        .foregroundColor(.accent)
+                }
+
+                Button {
+                    Task { await storeService.restore() }
+                } label: {
+                    Label(String(localized: "#restorePurchases"), systemImage: "arrow.clockwise")
+                        .font(.custom(AppFonts.regular, size: 16))
+                        .foregroundColor(.textPrimary)
+                }
             }
 
             Link(destination: URL(string: "https://smartkiitos.com/nodairy/privacy/")!) {

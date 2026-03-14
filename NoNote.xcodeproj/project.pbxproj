@@ -50,6 +50,7 @@
 		B10000000000000000000025 /* WritingPromptService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000024 /* WritingPromptService.swift */; };
 		B10000000000000000000026 /* WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000025 /* WeatherService.swift */; };
 		B10000000000000000000027 /* WeatherPickerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000026 /* WeatherPickerRow.swift */; };
+		B10000000000000000000028 /* StoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000028 /* StoreService.swift */; };
 		DC09999B2F634FA600FE7A6F /* SheepCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = DC09999A2F634FA600FE7A6F /* SheepCalendar */; };
 		DC0999A32F6409B800FE7A6F /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC0999A22F6409B700FE7A6F /* WidgetKit.framework */; };
 		DC0999A52F6409B800FE7A6F /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC0999A42F6409B800FE7A6F /* SwiftUI.framework */; };
@@ -129,12 +130,14 @@
 		A10000000000000000000025 /* WeatherService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherService.swift; sourceTree = "<group>"; };
 		A10000000000000000000026 /* WeatherPickerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherPickerRow.swift; sourceTree = "<group>"; };
 		A10000000000000000000027 /* Version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
+		A10000000000000000000028 /* StoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreService.swift; sourceTree = "<group>"; };
 		DC0999A12F6409B700FE7A6F /* NoDiaryWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NoDiaryWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC0999A22F6409B700FE7A6F /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		DC0999A42F6409B800FE7A6F /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		DC0999F42F6411CE00FE7A6F /* NoDiaryWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NoDiaryWidgetExtension.entitlements; sourceTree = "<group>"; };
 		DC8C85702F65AD9F00E91D3E /* WhatToTest.en-US.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "WhatToTest.en-US.txt"; sourceTree = "<group>"; };
 		DC8C85712F65AD9F00E91D3E /* WhatToTest.zh-Hans.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "WhatToTest.zh-Hans.txt"; sourceTree = "<group>"; };
+		DC8C85D72F65B8CF00E91D3E /* ProFlock.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; name = ProFlock.storekit; path = NoNote/ProFlock.storekit; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -186,6 +189,7 @@
 		6E535DD220FA854C00996470 = {
 			isa = PBXGroup;
 			children = (
+				DC8C85D72F65B8CF00E91D3E /* ProFlock.storekit */,
 				A10000000000000000000027 /* Version.xcconfig */,
 				DC0999F42F6411CE00FE7A6F /* NoDiaryWidgetExtension.entitlements */,
 				6E535DE520FA854D00996470 /* Assets.xcassets */,
@@ -264,6 +268,7 @@
 				A1000000000000000000001B /* LocalStorageService.swift */,
 				A10000000000000000000024 /* WritingPromptService.swift */,
 				A10000000000000000000025 /* WeatherService.swift */,
+				A10000000000000000000028 /* StoreService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -476,6 +481,7 @@
 				B10000000000000000000025 /* WritingPromptService.swift in Sources */,
 				B10000000000000000000026 /* WeatherService.swift in Sources */,
 				B10000000000000000000027 /* WeatherPickerRow.swift in Sources */,
+				B10000000000000000000028 /* StoreService.swift in Sources */,
 				B10000000000000000000008 /* AppColors.swift in Sources */,
 				B10000000000000000000009 /* AppFonts.swift in Sources */,
 			);

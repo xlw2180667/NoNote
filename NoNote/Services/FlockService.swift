@@ -13,6 +13,8 @@ struct SheepDefinition: Identifiable {
 
 struct FlockState {
     let sheep: [SheepDefinition]
+    let activeSheep: [SheepDefinition]
+    let ghostSheep: [SheepDefinition]
     let isAwake: Bool
     let totalEntries: Int
     let bestStreak: Int
@@ -57,7 +59,7 @@ enum FlockService {
         )
     }
 
-    static func computeFlockState(diaryDates: Set<String>) -> FlockState {
+    static func computeFlockState(diaryDates: Set<String>, isPro: Bool = false) -> FlockState {
         let currentStreak = StatsService.currentStreak(dates: diaryDates)
         let bestStreak = StatsService.longestStreak(dates: diaryDates)
         let totalEntries = diaryDates.count
@@ -82,6 +84,10 @@ enum FlockService {
         let merged = (regularSheep + specialSheep).sorted { $0.day < $1.day }
         let sheep = merged.map { $0.def }
 
+        let freeLimit = 5
+        let activeSheep = isPro ? sheep : Array(sheep.prefix(freeLimit))
+        let ghostSheep = isPro ? [] : Array(sheep.dropFirst(freeLimit))
+
         // Two-track progress
         let daysInRegularCycle = isAwake ? currentStreak % 7 : 0
         let progressToNextRegular = Double(daysInRegularCycle) / 7.0
@@ -93,6 +99,8 @@ enum FlockService {
 
         return FlockState(
             sheep: sheep,
+            activeSheep: activeSheep,
+            ghostSheep: ghostSheep,
             isAwake: isAwake,
             totalEntries: totalEntries,
             bestStreak: bestStreak,

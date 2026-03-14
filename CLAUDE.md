@@ -50,7 +50,7 @@ xcodebuild -project NoNote.xcodeproj -scheme NoDiary \
 
 ## Xcode Project File
 
-New `.swift` files use IDs in the `A1000000000000000000000X` / `B1000000000000000000000X` pattern in `project.pbxproj`. Next available: `A10000000000000000000027` / `B10000000000000000000028`. Group IDs: Models `C10000000000000000000002`, Services `C10000000000000000000003`, Views `C10000000000000000000004`.
+New `.swift` files use IDs in the `A1000000000000000000000X` / `B1000000000000000000000X` pattern in `project.pbxproj`. Next available: `A10000000000000000000029` / `B10000000000000000000029`. Group IDs: Models `C10000000000000000000002`, Services `C10000000000000000000003`, Views `C10000000000000000000004`.
 
 ## Future Features (Prioritized)
 

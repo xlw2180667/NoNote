@@ -205,6 +205,40 @@
         }
       }
     },
+    "#departedSheep" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Departed Sheep"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "离去的小羊"
+          }
+        }
+      }
+    },
+    "#departedSheepCount%lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld sheep have departed"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld只小羊已离去"
+          }
+        }
+      }
+    },
     "#delete" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -749,6 +783,23 @@
         }
       }
     },
+    "#proUnlocked" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pro Unlocked"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "已解锁专业版"
+          }
+        }
+      }
+    },
     "#reminderBody" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -796,6 +847,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "提醒时间"
+          }
+        }
+      }
+    },
+    "#restorePurchases" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore Purchases"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "恢复购买"
           }
         }
       }
@@ -1357,6 +1425,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "总日记数"
+          }
+        }
+      }
+    },
+    "#unlockFullFlock" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock Full Flock"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "解锁完整羊群"
           }
         }
       }

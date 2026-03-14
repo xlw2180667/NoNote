@@ -9,11 +9,13 @@ private struct ScrollOffsetKey: PreferenceKey {
 
 struct FlockDetailView: View {
     let diaryDates: Set<String>
+    @ObservedObject var storeService: StoreService
     @Environment(\.dismiss) private var dismiss
     @State private var sheepScrollOffset: CGFloat = 0
+    @State private var purchaseError: String?
 
     private var flockState: FlockState {
-        FlockService.computeFlockState(diaryDates: diaryDates)
+        FlockService.computeFlockState(diaryDates: diaryDates, isPro: storeService.isPro)
     }
 
     var body: some View {
@@ -24,6 +26,9 @@ struct FlockDetailView: View {
                     headerSection(state: state)
                     pastureScene(state: state)
                     progressCard(state: state)
+                    if !state.ghostSheep.isEmpty {
+                        departedCard(state: state)
+                    }
                     statsCard(state: state)
                 }
                 .padding(16)
@@ -128,10 +133,13 @@ struct FlockDetailView: View {
     }
 
     private func detailSheepLayout(state: FlockState, minWidth: CGFloat) -> some View {
+        let allSheep: [(def: SheepDefinition, ghost: Bool)] =
+            state.activeSheep.map { ($0, false) } + state.ghostSheep.map { ($0, true) }
         let sheepSize: CGFloat = 48
         let hSpacing: CGFloat = sheepSize * 0.3
-        let topRow = stride(from: 0, to: state.sheepCount, by: 2).map { state.sheep[$0] }
-        let bottomRow = stride(from: 1, to: state.sheepCount, by: 2).map { state.sheep[$0] }
+        let totalCount = allSheep.count
+        let topRow = stride(from: 0, to: totalCount, by: 2).map { allSheep[$0] }
+        let bottomRow = stride(from: 1, to: totalCount, by: 2).map { allSheep[$0] }
         let stagger = (sheepSize + hSpacing) / 2
         let topWidth = CGFloat(topRow.count) * (sheepSize + hSpacing)
         let bottomWidth = CGFloat(bottomRow.count) * (sheepSize + hSpacing) + stagger
@@ -140,14 +148,14 @@ struct FlockDetailView: View {
         return VStack(alignment: .leading, spacing: 4) {
             Spacer()
             HStack(spacing: hSpacing) {
-                ForEach(Array(topRow.enumerated()), id: \.element.id) { i, sheep in
-                    FlockSheepView(definition: sheep, isAwake: state.isAwake, size: sheepSize)
+                ForEach(Array(topRow.enumerated()), id: \.element.def.id) { i, item in
+                    FlockSheepView(definition: item.def, isAwake: state.isAwake, size: sheepSize, isGhost: item.ghost)
                         .offset(y: CGFloat(i % 2 == 0 ? -2 : 3))
                 }
             }
             HStack(spacing: hSpacing) {
-                ForEach(Array(bottomRow.enumerated()), id: \.element.id) { i, sheep in
-                    FlockSheepView(definition: sheep, isAwake: state.isAwake, size: sheepSize)
+                ForEach(Array(bottomRow.enumerated()), id: \.element.def.id) { i, item in
+                    FlockSheepView(definition: item.def, isAwake: state.isAwake, size: sheepSize, isGhost: item.ghost)
                         .offset(y: CGFloat(i % 2 == 0 ? 0 : 4))
                 }
             }
@@ -258,6 +266,69 @@ struct FlockDetailView: View {
         .padding(16)
         .background(Color.surfaceCard)
         .cornerRadius(16)
+    }
+
+    // MARK: - Departed Card
+
+    private func departedCard(state: FlockState) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(String(localized: "#departedSheep"))
+                .font(.custom(AppFonts.bold, size: 17))
+                .foregroundColor(.textPrimary)
+
+            Text(String(localized: "#departedSheepCount\(state.ghostSheep.count)"))
+                .font(.custom(AppFonts.regular, size: 13))
+                .foregroundColor(.textSecondary)
+
+            HStack(spacing: 8) {
+                ForEach(Array(state.ghostSheep.prefix(3).enumerated()), id: \.element.id) { _, sheep in
+                    FlockSheepView(definition: sheep, isAwake: state.isAwake, size: 36, isGhost: true)
+                }
+                if state.ghostSheep.count > 3 {
+                    Text("+\(state.ghostSheep.count - 3)")
+                        .font(.custom(AppFonts.medium, size: 14))
+                        .foregroundColor(.textSecondary)
+                }
+            }
+
+            Button {
+                Task {
+                    do {
+                        try await storeService.purchase()
+                    } catch {
+                        purchaseError = error.localizedDescription
+                    }
+                }
+            } label: {
+                Text(String(localized: "#unlockFullFlock"))
+                    .font(.custom(AppFonts.bold, size: 15))
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(Color.accent)
+                    .cornerRadius(12)
+            }
+
+            Button {
+                Task { await storeService.restore() }
+            } label: {
+                Text(String(localized: "#restorePurchases"))
+                    .font(.custom(AppFonts.regular, size: 13))
+                    .foregroundColor(.accent)
+                    .frame(maxWidth: .infinity)
+            }
+        }
+        .padding(16)
+        .background(Color.surfaceCard)
+        .cornerRadius(16)
+        .alert("Error", isPresented: Binding(
+            get: { purchaseError != nil },
+            set: { if !$0 { purchaseError = nil } }
+        )) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(purchaseError ?? "")
+        }
     }
 
     // MARK: - Stats Card
