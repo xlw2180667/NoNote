@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="hatGrad" x1="0.3" y1="0" x2="0.7" y2="1">
+      <stop offset="0%" stop-color="#E82020"/>
+      <stop offset="100%" stop-color="#C41010"/>
+    </linearGradient>
+    <radialGradient id="pomGrad" cx="0.4" cy="0.35">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#E8E0D8"/>
+    </radialGradient>
+    <radialGradient id="furGrad" cx="0.5" cy="0.3">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="70%" stop-color="#F0EBE5"/>
+      <stop offset="100%" stop-color="#E0D8D0"/>
+    </radialGradient>
+  </defs>
+  <!-- Hat body - curved cone -->
+  <path d="M20,78 Q25,45 40,25 Q50,12 60,15 Q70,50 80,78 Z" fill="url(#hatGrad)"/>
+  <!-- Subtle highlight -->
+  <path d="M30,70 Q33,45 45,28 Q50,20 52,22 Q45,45 40,70 Z" fill="white" opacity="0.1"/>
+  <!-- Fur trim band -->
+  <path d="M15,74 Q50,68 85,74 Q88,82 85,88 Q50,94 15,88 Q12,82 15,74 Z" fill="url(#furGrad)"/>
+  <!-- Fur texture dots -->
+  <circle cx="28" cy="80" r="2" fill="white" opacity="0.5"/>
+  <circle cx="42" cy="82" r="1.8" fill="white" opacity="0.4"/>
+  <circle cx="55" cy="79" r="2.2" fill="white" opacity="0.5"/>
+  <circle cx="68" cy="82" r="1.5" fill="white" opacity="0.4"/>
+  <circle cx="78" cy="80" r="2" fill="white" opacity="0.45"/>
+  <!-- Pompom -->
+  <circle cx="60" cy="15" r="10" fill="url(#pomGrad)"/>
+  <circle cx="56" cy="11" r="4" fill="white" opacity="0.3"/>
+  <circle cx="63" cy="18" r="3" fill="white" opacity="0.2"/>
+</svg>

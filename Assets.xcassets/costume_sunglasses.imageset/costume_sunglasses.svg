@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 45">
+  <defs>
+    <linearGradient id="lensGrad" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0%" stop-color="#1a1a2e"/>
+      <stop offset="40%" stop-color="#16213e"/>
+      <stop offset="100%" stop-color="#0f3460"/>
+    </linearGradient>
+  </defs>
+  <!-- Left lens -->
+  <path d="M8,16 Q8,6 20,6 L38,6 Q44,6 44,12 L44,28 Q44,38 34,38 L18,38 Q8,38 8,28 Z"
+        fill="url(#lensGrad)" stroke="#0a0a15" stroke-width="2"/>
+  <!-- Right lens -->
+  <path d="M56,16 Q56,6 66,6 L80,6 Q92,6 92,16 L92,28 Q92,38 82,38 L66,38 Q56,38 56,28 Z"
+        fill="url(#lensGrad)" stroke="#0a0a15" stroke-width="2"/>
+  <!-- Bridge -->
+  <path d="M44,14 Q50,10 56,14" stroke="#0a0a15" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- Glare highlights -->
+  <ellipse cx="22" cy="16" rx="8" ry="6" fill="white" opacity="0.15"/>
+  <ellipse cx="70" cy="16" rx="8" ry="6" fill="white" opacity="0.15"/>
+  <!-- Temple arms -->
+  <line x1="8" y1="12" x2="2" y2="10" stroke="#0a0a15" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="92" y1="12" x2="98" y2="10" stroke="#0a0a15" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

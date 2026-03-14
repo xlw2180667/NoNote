@@ -4,11 +4,16 @@ enum SheepAccessory: String {
     case none, star, crown, wings
 }
 
+enum SheepCostume: String, CaseIterable {
+    case none, scarf, sunglasses, bowtie, santaHat
+}
+
 struct SheepDefinition: Identifiable {
     let id: String
     let woolColor: Color
     let accessory: SheepAccessory
     let isSpecial: Bool
+    var costume: SheepCostume = .none
 }
 
 struct FlockState {
@@ -59,6 +64,15 @@ enum FlockService {
         )
     }
 
+    static func loadCostume(for sheepId: String) -> SheepCostume {
+        let raw = UserDefaults.standard.string(forKey: "sheepCostume_\(sheepId)") ?? ""
+        return SheepCostume(rawValue: raw) ?? .none
+    }
+
+    static func saveCostume(_ costume: SheepCostume, for sheepId: String) {
+        UserDefaults.standard.set(costume.rawValue, forKey: "sheepCostume_\(sheepId)")
+    }
+
     static func computeFlockState(diaryDates: Set<String>, isPro: Bool = false) -> FlockState {
         let currentStreak = StatsService.currentStreak(dates: diaryDates)
         let bestStreak = StatsService.longestStreak(dates: diaryDates)
@@ -82,11 +96,14 @@ enum FlockService {
 
         // Merge and sort by unlock day
         let merged = (regularSheep + specialSheep).sorted { $0.day < $1.day }
-        let sheep = merged.map { $0.def }
+        var sheep = merged.map { $0.def }
 
-        let freeLimit = 5
-        let activeSheep = isPro ? sheep : Array(sheep.prefix(freeLimit))
-        let ghostSheep = isPro ? [] : Array(sheep.dropFirst(freeLimit))
+        // Load persisted costumes for each sheep
+        #if DEBUG
+        for i in sheep.indices {
+            sheep[i].costume = loadCostume(for: sheep[i].id)
+        }
+        #endif
 
         // Two-track progress
         let daysInRegularCycle = isAwake ? currentStreak % 7 : 0
@@ -96,6 +113,10 @@ enum FlockService {
         let daysInSpecialCycle = isAwake ? currentStreak % 30 : 0
         let progressToNextSpecial = Double(daysInSpecialCycle) / 30.0
         let daysToNextSpecial = 30 - daysInSpecialCycle
+
+        let freeLimit = 5
+        let activeSheep = isPro ? sheep : Array(sheep.prefix(freeLimit))
+        let ghostSheep = isPro ? [] : Array(sheep.dropFirst(freeLimit))
 
         return FlockState(
             sheep: sheep,

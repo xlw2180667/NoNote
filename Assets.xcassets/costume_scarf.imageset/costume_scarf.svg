@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80">
+  <defs>
+    <linearGradient id="scarfGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E63333"/>
+      <stop offset="100%" stop-color="#C41E1E"/>
+    </linearGradient>
+  </defs>
+  <!-- Main band with curve -->
+  <path d="M8,8 Q60,2 112,8 L112,28 Q60,34 8,28 Z" fill="url(#scarfGrad)"/>
+  <!-- Cream stripe -->
+  <path d="M10,14 Q60,9 110,14 L110,18 Q60,13 10,18 Z" fill="#F5E6C8" opacity="0.5"/>
+  <!-- Gold thin stripe -->
+  <path d="M10,22 Q60,28 110,22 L110,24 Q60,30 10,24 Z" fill="#E8C840" opacity="0.35"/>
+  <!-- Hanging tail -->
+  <path d="M82,28 C85,28 95,28 98,28 C97,40 96,55 94,65 Q90,70 86,65 C84,55 83,40 82,28Z" fill="url(#scarfGrad)"/>
+  <!-- Tail stripe -->
+  <path d="M84,40 L96,40 L95.5,44 L84.5,44 Z" fill="#F5E6C8" opacity="0.5"/>
+  <path d="M84.5,50 L95,50 L94.8,52 L84.7,52 Z" fill="#E8C840" opacity="0.35"/>
+  <!-- Fringe -->
+  <line x1="85" y1="64" x2="85" y2="76" stroke="#C41E1E" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="88.5" y1="65" x2="88.5" y2="77" stroke="#C41E1E" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="92" y1="65" x2="92" y2="76" stroke="#C41E1E" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="95" y1="64" x2="95" y2="75" stroke="#C41E1E" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

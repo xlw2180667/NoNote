@@ -14,6 +14,9 @@ struct FlockSheepView: View {
             }
             .frame(width: size, height: size)
 
+            // Costume SVG overlay
+            costumeOverlay
+
             // ZZZ for sleeping sheep
             if !isAwake && !isGhost {
                 Text("z z z")
@@ -70,6 +73,7 @@ struct FlockSheepView: View {
         } else if definition.accessory == .crown {
             drawCrown(context: &context, s: s, cx: cx, cy: cy, strokeW: strokeW)
         }
+
     }
 
     // MARK: - Body Parts
@@ -206,6 +210,40 @@ struct FlockSheepView: View {
             let wr = CGRect(x: wx, y: wingY - wingH / 2, width: wingW, height: wingH)
             context.fill(Path(ellipseIn: wr), with: .color(wingColor))
             context.stroke(Path(ellipseIn: wr), with: .color(strokeColor.opacity(0.15)), lineWidth: strokeW * 0.5)
+        }
+    }
+
+    // MARK: - Costume SVG Overlay
+
+    @ViewBuilder
+    private var costumeOverlay: some View {
+        switch definition.costume {
+        case .scarf:
+            Image("costume_scarf")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: size * 0.50)
+                .offset(y: size * 0.38)
+        case .sunglasses:
+            Image("costume_sunglasses")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: size * 0.48)
+                .offset(y: size * 0.01)
+        case .bowtie:
+            Image("costume_bowtie")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: size * 0.35)
+                .offset(y: size * 0.30)
+        case .santaHat:
+            Image("costume_santahat")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: size * 0.42)
+                .offset(x: size * 0.02, y: -size * 0.30)
+        case .none:
+            EmptyView()
         }
     }
 }
