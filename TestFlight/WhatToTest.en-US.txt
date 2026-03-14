@@ -1,0 +1,5 @@
+- Two-track sheep system: regular (every 7 days) and special (every 30 days) with golden glow and cycling accessories (star/crown/wings)
+- Parallax scrolling prairie: grass moves at 0.3x sheep scroll speed, sky and clouds stay fixed
+- Auto weather via Open-Meteo API with manual override picker
+- Daily writing prompts (30 hardcoded, date-seeded, en+zh)
+- Dual progress bars in flock detail (regular + special track)

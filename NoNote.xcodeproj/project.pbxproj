@@ -54,6 +54,8 @@
 		DC0999A32F6409B800FE7A6F /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC0999A22F6409B700FE7A6F /* WidgetKit.framework */; };
 		DC0999A52F6409B800FE7A6F /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC0999A42F6409B800FE7A6F /* SwiftUI.framework */; };
 		DC0999B62F6409B800FE7A6F /* NoDiaryWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = DC0999A12F6409B700FE7A6F /* NoDiaryWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		DC8C85732F65AD9F00E91D3E /* WhatToTest.zh-Hans.txt in Resources */ = {isa = PBXBuildFile; fileRef = DC8C85712F65AD9F00E91D3E /* WhatToTest.zh-Hans.txt */; };
+		DC8C85742F65AD9F00E91D3E /* WhatToTest.en-US.txt in Resources */ = {isa = PBXBuildFile; fileRef = DC8C85702F65AD9F00E91D3E /* WhatToTest.en-US.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -126,11 +128,13 @@
 		A10000000000000000000024 /* WritingPromptService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WritingPromptService.swift; sourceTree = "<group>"; };
 		A10000000000000000000025 /* WeatherService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherService.swift; sourceTree = "<group>"; };
 		A10000000000000000000026 /* WeatherPickerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherPickerRow.swift; sourceTree = "<group>"; };
+		A10000000000000000000027 /* Version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
 		DC0999A12F6409B700FE7A6F /* NoDiaryWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NoDiaryWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC0999A22F6409B700FE7A6F /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		DC0999A42F6409B800FE7A6F /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		DC0999F42F6411CE00FE7A6F /* NoDiaryWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NoDiaryWidgetExtension.entitlements; sourceTree = "<group>"; };
-		A10000000000000000000027 /* Version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
+		DC8C85702F65AD9F00E91D3E /* WhatToTest.en-US.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "WhatToTest.en-US.txt"; sourceTree = "<group>"; };
+		DC8C85712F65AD9F00E91D3E /* WhatToTest.zh-Hans.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "WhatToTest.zh-Hans.txt"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -186,6 +190,7 @@
 				DC0999F42F6411CE00FE7A6F /* NoDiaryWidgetExtension.entitlements */,
 				6E535DE520FA854D00996470 /* Assets.xcassets */,
 				6E535DDD20FA854C00996470 /* NoNote */,
+				DC8C85722F65AD9F00E91D3E /* TestFlight */,
 				DC0999A62F6409B800FE7A6F /* NoDiaryWidget */,
 				6E535DDC20FA854C00996470 /* Products */,
 				1E702CF9F8D389FEF4D51BAC /* Frameworks */,
@@ -306,6 +311,15 @@
 			path = Localization;
 			sourceTree = "<group>";
 		};
+		DC8C85722F65AD9F00E91D3E /* TestFlight */ = {
+			isa = PBXGroup;
+			children = (
+				DC8C85702F65AD9F00E91D3E /* WhatToTest.en-US.txt */,
+				DC8C85712F65AD9F00E91D3E /* WhatToTest.zh-Hans.txt */,
+			);
+			path = TestFlight;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -406,6 +420,8 @@
 			files = (
 				6EC666F320FA8C9200827A26 /* Roboto-Regular.ttf in Resources */,
 				6E535DE620FA854D00996470 /* Assets.xcassets in Resources */,
+				DC8C85732F65AD9F00E91D3E /* WhatToTest.zh-Hans.txt in Resources */,
+				DC8C85742F65AD9F00E91D3E /* WhatToTest.en-US.txt in Resources */,
 				6EC666F220FA8C9200827A26 /* Roboto-Medium.ttf in Resources */,
 				6EC666F120FA8C9200827A26 /* Roboto-Bold.ttf in Resources */,
 				6EC666FD20FAACFC00827A26 /* sheep.png in Resources */,

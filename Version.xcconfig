@@ -1,5 +1,6 @@
 // Version.xcconfig
-// Change version numbers here — they apply to both the app and widget.
+// Change version numbers here. Applies to both the app and widget targets.
+// TestFlight notes go in TestFlightNotes.txt (supports multi-line).
 
 MARKETING_VERSION = 2.1
 CURRENT_PROJECT_VERSION = 5
