@@ -1565,6 +1565,40 @@
         }
       }
     },
+    "#unlockFullFlockButton" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock Now"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "立即解锁"
+          }
+        }
+      }
+    },
+    "#unlockFullFlockDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unlock unlimited sheep, costumes, and more!"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "解锁无限小羊、换装功能等更多内容！"
+          }
+        }
+      }
+    },
     "#unlockToUseCostumes" : {
       "extractionState" : "manual",
       "localizations" : {

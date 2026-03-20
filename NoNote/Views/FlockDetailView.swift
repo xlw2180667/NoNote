@@ -28,8 +28,8 @@ struct FlockDetailView: View {
                     headerSection(state: state)
                     pastureScene(state: state)
                     progressCard(state: state)
-                    if !state.ghostSheep.isEmpty {
-                        departedCard(state: state)
+                    if !storeService.isPro {
+                        proUnlockCard(state: state)
                     }
                     statsCard(state: state)
                 }
@@ -404,26 +404,33 @@ struct FlockDetailView: View {
         .cornerRadius(16)
     }
 
-    // MARK: - Departed Card
+    // MARK: - Pro Unlock Card
 
-    private func departedCard(state: FlockState) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(String(localized: "#departedSheep"))
+    private func proUnlockCard(state: FlockState) -> some View {
+        VStack(spacing: 12) {
+            Image(systemName: "sparkles")
+                .font(.system(size: 28))
+                .foregroundColor(.warmAccent)
+
+            Text(String(localized: "#unlockFullFlock"))
                 .font(.custom(AppFonts.bold, size: 17))
                 .foregroundColor(.textPrimary)
 
-            Text(String(localized: "#departedSheepCount\(state.ghostSheep.count)"))
+            Text(String(localized: "#unlockFullFlockDescription"))
                 .font(.custom(AppFonts.regular, size: 13))
                 .foregroundColor(.textSecondary)
+                .multilineTextAlignment(.center)
 
-            HStack(spacing: 8) {
-                ForEach(Array(state.ghostSheep.prefix(3).enumerated()), id: \.element.id) { _, sheep in
-                    FlockSheepView(definition: sheep, isAwake: state.isAwake, size: 36, isGhost: true)
-                }
-                if state.ghostSheep.count > 3 {
-                    Text("+\(state.ghostSheep.count - 3)")
-                        .font(.custom(AppFonts.medium, size: 14))
-                        .foregroundColor(.textSecondary)
+            if !state.ghostSheep.isEmpty {
+                HStack(spacing: 8) {
+                    ForEach(Array(state.ghostSheep.prefix(3).enumerated()), id: \.element.id) { _, sheep in
+                        FlockSheepView(definition: sheep, isAwake: state.isAwake, size: 36, isGhost: true)
+                    }
+                    if state.ghostSheep.count > 3 {
+                        Text("+\(state.ghostSheep.count - 3)")
+                            .font(.custom(AppFonts.medium, size: 14))
+                            .foregroundColor(.textSecondary)
+                    }
                 }
             }
 
@@ -436,7 +443,7 @@ struct FlockDetailView: View {
                     }
                 }
             } label: {
-                Text(String(localized: "#unlockFullFlock"))
+                Text(String(localized: "#unlockFullFlockButton"))
                     .font(.custom(AppFonts.bold, size: 15))
                     .foregroundColor(.white)
                     .frame(maxWidth: .infinity)
