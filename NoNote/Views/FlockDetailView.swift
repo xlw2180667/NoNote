@@ -56,22 +56,8 @@ struct FlockDetailView: View {
                                 zoomedSheep = nil
                             }
                         }
-                    #if DEBUG
                     wardrobeCard(sheep: sheep, isAwake: state.isAwake)
                         .transition(.scale.combined(with: .opacity))
-                    #else
-                    VStack(spacing: 12) {
-                        FlockSheepView(definition: sheep, isAwake: state.isAwake, size: 160)
-                        Text(sheep.isSpecial ? sheep.accessory.rawValue : sheep.id)
-                            .font(.custom(AppFonts.medium, size: 14))
-                            .foregroundColor(.textSecondary)
-                    }
-                    .padding(24)
-                    .background(Color.surfaceCard)
-                    .cornerRadius(20)
-                    .shadow(color: .black.opacity(0.15), radius: 12, y: 4)
-                    .transition(.scale.combined(with: .opacity))
-                    #endif
                 }
             }
             .animation(.spring(response: 0.3, dampingFraction: 0.8), value: zoomedSheep?.id)

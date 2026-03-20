@@ -98,11 +98,9 @@ enum FlockService {
         var sheep = merged.map { $0.def }
 
         // Load persisted costumes for each sheep
-        #if DEBUG
         for i in sheep.indices {
             sheep[i].costume = loadCostume(for: sheep[i].id)
         }
-        #endif
 
         // Two-track progress
         let daysInRegularCycle = isAwake ? currentStreak % 7 : 0
