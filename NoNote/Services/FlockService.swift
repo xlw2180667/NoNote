@@ -79,10 +79,9 @@ enum FlockService {
         let totalEntries = diaryDates.count
 
         let isAwake = currentStreak > 0
-        let streak = isAwake ? currentStreak : bestStreak
 
-        let regularCount = streak / 7
-        let specialCount = streak / 30
+        let regularCount = bestStreak / 7
+        let specialCount = bestStreak / 30
 
         // Build regular sheep with unlock days
         let regularSheep: [(day: Int, def: SheepDefinition)] = (0..<regularCount).map { i in
