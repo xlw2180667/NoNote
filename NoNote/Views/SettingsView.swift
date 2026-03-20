@@ -62,7 +62,7 @@ struct SettingsView: View {
                 }
             }
 
-            Link(destination: URL(string: "https://smartkiitos.com/nodairy/privacy/")!) {
+            Link(destination: URL(string: "https://smartkiitos.com/nodiary/privacy/")!) {
                 Label(String(localized: "#privacyPolicy"), systemImage: "hand.raised")
                     .font(.custom(AppFonts.regular, size: 16))
                     .foregroundColor(.textPrimary)
