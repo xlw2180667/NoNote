@@ -316,6 +316,24 @@ final class CloudKitService: ObservableObject {
 
     #if DEBUG
     private let debugMoods = ["happy", "good", "neutral", "sad", "happy", "good", "happy"]
+    private let debugWeathers = ["0", "2", "63", "0", "2", "81", "0", "95", "2", "0", "53", "2", "0"]
+    private let debugTextsZh = [
+        "和朋友吃了顿超棒的早午餐 ☀️",
+        "终于读完那本书了，很受启发。",
+        "平静又高效的一天。",
+        "下雨天，在家煲了汤。",
+        "早上健身刷新了个人纪录！💪",
+        "去了趟菜市场，买了花。",
+        "和家人一起看电影 🎬",
+        "打卡了市中心新开的咖啡店。",
+        "在公园写生，樱花开了 🌸",
+        "把整个家打扫了一遍。",
+        "和老朋友聊了很久，很治愈。",
+        "自己动手做了意面，好吃！🍝",
+        "发现一家很可爱的小书店。",
+        "晨间瑜伽，沿着河边散步。",
+        "桌游之夜！玩到半夜 🎲",
+    ]
     private let debugTexts = [
         "Had a wonderful brunch with friends today. ☀️",
         "Finished reading that book. Really inspiring.",
@@ -346,14 +364,17 @@ final class CloudKitService: ObservableObject {
         diaryCache.removeAll()
 
         // Build a consecutive streak of `count` days ending at today (or yesterday if breakStreak)
+        let isChinese = Locale.preferredLanguages.first?.hasPrefix("zh") == true
+        let texts = isChinese ? debugTextsZh : debugTexts
         let startOffset = breakStreak ? 1 : 0
         for i in startOffset..<(count + startOffset) {
             guard let date = cal.date(byAdding: .day, value: -i, to: today) else { continue }
             let dateString = formatter.string(from: date)
             let mood = debugMoods[i % debugMoods.count]
-            let text = debugTexts[i % debugTexts.count]
+            let text = texts[i % texts.count]
+            let weather = debugWeathers[i % debugWeathers.count]
             diaryDates.insert(dateString)
-            diaryCache[dateString] = DiaryCacheEntry(text: text, mood: mood)
+            diaryCache[dateString] = DiaryCacheEntry(text: text, mood: mood, weather: weather)
         }
 
         persistLocally()

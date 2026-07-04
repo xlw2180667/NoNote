@@ -29,6 +29,13 @@ final class StoreService: ObservableObject {
     }
 
     func checkEntitlements() async {
+        #if DEBUG
+        // Screenshot/demo mode: launch with -DemoPro to force the full flock
+        if ProcessInfo.processInfo.arguments.contains("-DemoPro") {
+            isPro = true
+            return
+        }
+        #endif
         var entitled = false
         for await result in Transaction.currentEntitlements {
             if case .verified(let tx) = result,

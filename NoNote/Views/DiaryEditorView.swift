@@ -1,5 +1,6 @@
 import SwiftUI
 import PhotosUI
+import StoreKit
 import UniformTypeIdentifiers
 
 // MARK: - Photo Item
@@ -52,6 +53,7 @@ struct DiaryEditorView: View {
     @ObservedObject var cloudKit: CloudKitService
     @Environment(\.dismiss) private var dismiss
     @Environment(\.horizontalSizeClass) private var hSizeClass
+    @Environment(\.requestReview) private var requestReview
     @State private var text: String = ""
     @State private var mood: String? = nil
     @State private var isLoading = false
@@ -382,6 +384,12 @@ struct DiaryEditorView: View {
         // Brief loading indicator for user feedback
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             isLoading = false
+        }
+        // Ask for a rating when this save unlocked a new sheep
+        if ReviewPromptService.shouldRequestReview(diaryDates: cloudKit.diaryDates) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                requestReview()
+            }
         }
     }
 

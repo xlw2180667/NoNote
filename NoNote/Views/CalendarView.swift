@@ -13,6 +13,11 @@ struct CalendarView: View {
     @State private var errorMessage = ""
     @State private var showSearch = false
     @State private var showStats = false
+    #if DEBUG
+    @State private var showDemoFlock = false
+    @State private var showDemoStats = false
+    @State private var showDemoShareCard = false
+    #endif
 
     private let dateFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -33,6 +38,22 @@ struct CalendarView: View {
             }
         }
         .task {
+            #if DEBUG
+            // Auto-open a screen for App Store screenshots: -DemoScreen editor|stats|flock
+            if let screen = UserDefaults.standard.string(forKey: "DemoScreen") {
+                try? await Task.sleep(for: .seconds(0.8))
+                switch screen {
+                case "editor": showEditor = true
+                case "stats":
+                    demoShowLastMonth()
+                    showDemoStats = true
+                case "flock": showDemoFlock = true
+                case "sharecard": showDemoShareCard = true
+                case "lastMonth": demoShowLastMonth()
+                default: break
+                }
+            }
+            #endif
             await fetchCurrentMonth()
         }
         .onChange(of: displayedMonth) { _ in
@@ -58,6 +79,24 @@ struct CalendarView: View {
                 displayedMonth: displayedMonth
             )
         }
+        #if DEBUG
+        .fullScreenCover(isPresented: $showDemoFlock) {
+            FlockDetailView(diaryDates: cloudKit.diaryDates, storeService: storeService)
+        }
+        .fullScreenCover(isPresented: $showDemoStats) {
+            MonthlyStatsView(
+                diaryDates: cloudKit.diaryDates,
+                diaryCache: cloudKit.diaryCache,
+                displayedMonth: displayedMonth
+            )
+        }
+        .fullScreenCover(isPresented: $showDemoShareCard) {
+            FlockShareCardView(state: FlockService.computeFlockState(
+                diaryDates: cloudKit.diaryDates, isPro: storeService.isPro))
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.surface)
+        }
+        #endif
     }
 
     // MARK: - iPhone Layout
@@ -296,6 +335,21 @@ struct CalendarView: View {
             return .gray.opacity(0.5)
         }
     }
+
+    #if DEBUG
+    /// Screenshot helper: show the previous (fully written) month.
+    private func demoShowLastMonth() {
+        let cal = Calendar.current
+        guard let lastMonth = cal.date(byAdding: .month, value: -1, to: Date()) else { return }
+        displayedMonth = lastMonth
+        var comps = cal.dateComponents([.year, .month], from: lastMonth)
+        comps.day = 20
+        if let day = cal.date(from: comps) {
+            selectedDate = day
+            selection = .single(day)
+        }
+    }
+    #endif
 
     private func goToToday() {
         displayedMonth = Date()

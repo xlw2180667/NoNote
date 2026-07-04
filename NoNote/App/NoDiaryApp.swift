@@ -31,6 +31,12 @@ struct RootView: View {
             }
         }
         .task {
+            #if DEBUG
+            // Seed demo data for App Store screenshots: launch with -DemoData
+            if ProcessInfo.processInfo.arguments.contains("-DemoData") {
+                cloudKit.generateTestData(count: 66)
+            }
+            #endif
             // Delay initial weather fetch so it doesn't block the first frame
             try? await Task.sleep(for: .seconds(1.5))
             weatherService.refresh()

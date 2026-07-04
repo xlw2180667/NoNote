@@ -51,6 +51,8 @@
 		B10000000000000000000026 /* WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000025 /* WeatherService.swift */; };
 		B10000000000000000000027 /* WeatherPickerRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000026 /* WeatherPickerRow.swift */; };
 		B10000000000000000000028 /* StoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000028 /* StoreService.swift */; };
+		B10000000000000000000029 /* ReviewPromptService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000029 /* ReviewPromptService.swift */; };
+		B1000000000000000000002A /* FlockShareCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000002A /* FlockShareCardView.swift */; };
 		DC09999B2F634FA600FE7A6F /* SheepCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = DC09999A2F634FA600FE7A6F /* SheepCalendar */; };
 		DC0999A32F6409B800FE7A6F /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC0999A22F6409B700FE7A6F /* WidgetKit.framework */; };
 		DC0999A52F6409B800FE7A6F /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC0999A42F6409B800FE7A6F /* SwiftUI.framework */; };
@@ -131,6 +133,8 @@
 		A10000000000000000000026 /* WeatherPickerRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherPickerRow.swift; sourceTree = "<group>"; };
 		A10000000000000000000027 /* Version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
 		A10000000000000000000028 /* StoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreService.swift; sourceTree = "<group>"; };
+		A10000000000000000000029 /* ReviewPromptService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewPromptService.swift; sourceTree = "<group>"; };
+		A1000000000000000000002A /* FlockShareCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlockShareCardView.swift; sourceTree = "<group>"; };
 		DC0999A12F6409B700FE7A6F /* NoDiaryWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NoDiaryWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC0999A22F6409B700FE7A6F /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		DC0999A42F6409B800FE7A6F /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
@@ -269,6 +273,7 @@
 				A10000000000000000000024 /* WritingPromptService.swift */,
 				A10000000000000000000025 /* WeatherService.swift */,
 				A10000000000000000000028 /* StoreService.swift */,
+				A10000000000000000000029 /* ReviewPromptService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -283,6 +288,7 @@
 				A1000000000000000000001A /* ExportView.swift */,
 				A10000000000000000000022 /* FlockBannerView.swift */,
 				A10000000000000000000023 /* FlockDetailView.swift */,
+				A1000000000000000000002A /* FlockShareCardView.swift */,
 				A10000000000000000000021 /* FlockSheepView.swift */,
 				A10000000000000000000007 /* LoadingOverlay.swift */,
 				A1000000000000000000001E /* LockScreenView.swift */,
@@ -478,6 +484,8 @@
 				B10000000000000000000022 /* FlockSheepView.swift in Sources */,
 				B10000000000000000000023 /* FlockBannerView.swift in Sources */,
 				B10000000000000000000024 /* FlockDetailView.swift in Sources */,
+				B10000000000000000000029 /* ReviewPromptService.swift in Sources */,
+				B1000000000000000000002A /* FlockShareCardView.swift in Sources */,
 				B10000000000000000000025 /* WritingPromptService.swift in Sources */,
 				B10000000000000000000026 /* WeatherService.swift in Sources */,
 				B10000000000000000000027 /* WeatherPickerRow.swift in Sources */,

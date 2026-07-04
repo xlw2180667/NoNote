@@ -15,6 +15,7 @@ struct FlockDetailView: View {
     @State private var purchaseError: String?
     @State private var zoomedSheep: SheepDefinition?
     @State private var previewCostume: SheepCostume?
+    @State private var shareImage: Image?
 
     private var flockState: FlockState {
         FlockService.computeFlockState(diaryDates: diaryDates, isPro: storeService.isPro)
@@ -39,12 +40,26 @@ struct FlockDetailView: View {
             .navigationTitle(String(localized: "#myFlock"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    if let shareImage, state.sheepCount > 0 {
+                        ShareLink(
+                            item: shareImage,
+                            preview: SharePreview(String(localized: "#shareFlock"), image: shareImage)
+                        ) {
+                            Image(systemName: "square.and.arrow.up")
+                                .foregroundColor(.accent)
+                        }
+                    }
+                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { dismiss() }) {
                         Image(systemName: "xmark.circle.fill")
                             .foregroundColor(.textSecondary)
                     }
                 }
+            }
+            .task(id: storeService.isPro) {
+                renderShareCard()
             }
             .overlay {
                 if let sheep = zoomedSheep {
@@ -61,6 +76,18 @@ struct FlockDetailView: View {
                 }
             }
             .animation(.spring(response: 0.3, dampingFraction: 0.8), value: zoomedSheep?.id)
+        }
+    }
+
+    // MARK: - Share Card
+
+    @MainActor
+    private func renderShareCard() {
+        let renderer = ImageRenderer(content: FlockShareCardView(state: flockState))
+        renderer.scale = 3
+        renderer.isOpaque = false
+        if let uiImage = renderer.uiImage {
+            shareImage = Image(uiImage: uiImage)
         }
     }
 
