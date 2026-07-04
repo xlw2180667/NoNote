@@ -17,6 +17,7 @@ struct CalendarView: View {
     @State private var showDemoFlock = false
     @State private var showDemoStats = false
     @State private var showDemoShareCard = false
+    @State private var showDemoLock = false
     #endif
 
     private let dateFormatter: DateFormatter = {
@@ -49,6 +50,7 @@ struct CalendarView: View {
                     showDemoStats = true
                 case "flock": showDemoFlock = true
                 case "sharecard": showDemoShareCard = true
+                case "lock": showDemoLock = true
                 case "lastMonth": demoShowLastMonth()
                 default: break
                 }
@@ -89,6 +91,9 @@ struct CalendarView: View {
                 diaryCache: cloudKit.diaryCache,
                 displayedMonth: displayedMonth
             )
+        }
+        .fullScreenCover(isPresented: $showDemoLock) {
+            LockScreenView { }
         }
         .fullScreenCover(isPresented: $showDemoShareCard) {
             FlockShareCardView(state: FlockService.computeFlockState(

@@ -33,6 +33,10 @@ struct LockScreenView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.surface.ignoresSafeArea())
         .onAppear {
+            #if DEBUG
+            // Screenshot demo mode: show the lock screen itself, no system prompt
+            if UserDefaults.standard.string(forKey: "DemoScreen") == "lock" { return }
+            #endif
             authenticate()
         }
     }

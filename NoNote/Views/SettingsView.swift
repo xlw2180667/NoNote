@@ -62,6 +62,12 @@ struct SettingsView: View {
                 }
             }
 
+            Link(destination: URL(string: "https://apps.apple.com/app/id1412453660?action=write-review")!) {
+                Label(String(localized: "#rateApp"), systemImage: "heart")
+                    .font(.custom(AppFonts.regular, size: 16))
+                    .foregroundColor(.textPrimary)
+            }
+
             Link(destination: URL(string: "https://smartkiitos.com/nodiary/privacy/")!) {
                 Label(String(localized: "#privacyPolicy"), systemImage: "hand.raised")
                     .font(.custom(AppFonts.regular, size: 16))

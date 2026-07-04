@@ -919,6 +919,23 @@
         }
       }
     },
+    "#rateApp" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rate NoDiary"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "给 NoDiary 一个好评"
+          }
+        }
+      }
+    },
     "#reminderBody" : {
       "extractionState" : "manual",
       "localizations" : {
