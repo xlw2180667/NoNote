@@ -168,12 +168,12 @@ enum FlockService {
     }
 
     static func loadCostume(for sheepId: String) -> SheepCostume {
-        let raw = UserDefaults.standard.string(forKey: "sheepCostume_\(sheepId)") ?? ""
+        let raw = SyncedSettings.shared.string(forKey: "sheepCostume_\(sheepId)") ?? ""
         return SheepCostume(rawValue: raw) ?? .none
     }
 
     static func saveCostume(_ costume: SheepCostume, for sheepId: String) {
-        UserDefaults.standard.set(costume.rawValue, forKey: "sheepCostume_\(sheepId)")
+        SyncedSettings.shared.set(costume.rawValue, forKey: "sheepCostume_\(sheepId)")
     }
 
     /// Sheep names live next to costumes: same per-sheep UserDefaults pattern, same Pro gate.
@@ -181,18 +181,14 @@ enum FlockService {
     static let maxSheepNameLength = 12
 
     static func loadName(for sheepId: String) -> String {
-        UserDefaults.standard.string(forKey: "sheepName_\(sheepId)") ?? ""
+        SyncedSettings.shared.string(forKey: "sheepName_\(sheepId)") ?? ""
     }
 
     static func saveName(_ name: String, for sheepId: String) {
         let cleaned = String(name.trimmingCharacters(in: .whitespacesAndNewlines)
             .prefix(maxSheepNameLength))
-        let key = "sheepName_\(sheepId)"
-        if cleaned.isEmpty {
-            UserDefaults.standard.removeObject(forKey: key)
-        } else {
-            UserDefaults.standard.set(cleaned, forKey: key)
-        }
+        // set(nil:) removes in both stores, so an emptied name clears everywhere
+        SyncedSettings.shared.set(cleaned.isEmpty ? nil : cleaned, forKey: "sheepName_\(sheepId)")
     }
 
     static func computeFlockState(diaryDates: Set<String>, isPro: Bool = false) -> FlockState {

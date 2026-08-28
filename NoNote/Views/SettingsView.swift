@@ -3,7 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     @ObservedObject var cloudKit: CloudKitService
     @ObservedObject var storeService: StoreService
-    @AppStorage("pastureSeason") private var pastureSeason = PastureSeason.auto.rawValue
+    @ObservedObject private var synced = SyncedSettings.shared
     @AppStorage("writingPromptsEnabled") private var promptsEnabled = true
 
     var body: some View {
@@ -42,7 +42,8 @@ struct SettingsView: View {
             }
 
             if storeService.isPro {
-                Picker(selection: $pastureSeason) {
+                Picker(selection: Binding(get: { synced.pastureSeason },
+                                          set: { synced.pastureSeason = $0 })) {
                     ForEach(PastureSeason.allCases) { season in
                         Text(String(localized: String.LocalizationValue(season.localizedNameKey)))
                             .tag(season.rawValue)

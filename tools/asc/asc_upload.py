@@ -412,6 +412,42 @@ def sync_iap(app_id, locales, dry):
         print(f"iapLoc {locale} ✓ ({verb})")
 
 
+def attach_build(app_id, version_id, want: str, dry: bool):
+    """把某个已处理完的构建绑到可编辑版本上(送审前必须做,否则没有二进制)。
+
+    want 传构建号(如 "8"),或 "latest" 取最新一个 VALID 的。
+    """
+    builds = get_all(f"/v1/apps/{app_id}/builds?limit=50")
+    valid = [b for b in builds
+             if b["attributes"].get("processingState") == "VALID"
+             and not b["attributes"].get("expired")]
+    valid.sort(key=lambda b: b["attributes"].get("uploadedDate") or "", reverse=True)
+    if not valid:
+        raise SystemExit("没有处理完成(VALID)且未过期的构建")
+
+    if want == "latest":
+        build = valid[0]
+    else:
+        build = next((b for b in valid if b["attributes"].get("version") == want), None)
+        if not build:
+            have = ", ".join(b["attributes"].get("version") for b in valid)
+            raise SystemExit(f"没找到 VALID 的构建 {want}(可用: {have})")
+
+    at = build["attributes"]
+    current = request("GET", f"/v1/appStoreVersions/{version_id}/build").get("data")
+    print(f"构建 {at.get('version')} (上传于 {at.get('uploadedDate')}) → 版本记录")
+    print(f"  当前已绑: {current['id'] if current else '无'}")
+    if dry:
+        print("[dry] 未写入")
+        return
+    request("PATCH", f"/v1/appStoreVersions/{version_id}/relationships/build",
+            {"data": {"type": "builds", "id": build["id"]}})
+    after = request("GET", f"/v1/appStoreVersions/{version_id}/build").get("data")
+    if not after or after["id"] != build["id"]:
+        raise SystemExit("绑定后回读不一致,请到 ASC 网页确认")
+    print(f"已绑定构建 {at.get('version')} ✓")
+
+
 LIMITS = {"name": 30, "subtitle": 30, "keywords": 100, "promotionalText": 170,
           "description": 4000, "whatsNew": 4000}
 
@@ -440,6 +476,8 @@ def main():
     ap.add_argument("--dump", action="store_true", help="只读:打印线上现有元数据后退出")
     ap.add_argument("--screenshots", action="store_true", help="同时上传截图")
     ap.add_argument("--iap", action="store_true", help="同时写内购的显示名/描述本地化")
+    ap.add_argument("--attach-build", metavar="N",
+                    help="把构建 N(或 latest)绑到可编辑版本上,送审前必须做")
     ap.add_argument("--locales", help="只处理这些 ASC locale,逗号分隔(默认全部)")
     args = ap.parse_args()
 
@@ -468,6 +506,8 @@ def main():
         upload_screenshots(loc_ids, locales, args.dry_run)
     if args.iap:
         sync_iap(app_id, locales, args.dry_run)
+    if args.attach_build:
+        attach_build(app_id, version_id, args.attach_build, args.dry_run)
     print("完成" + ("(dry-run,未写入)" if args.dry_run else ""))
 
 

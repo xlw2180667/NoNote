@@ -56,6 +56,7 @@
 		B1000000000000000000002C /* DiaryImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000002C /* DiaryImportService.swift */; };
 		B1000000000000000000002D /* ImportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000002D /* ImportView.swift */; };
 		B1000000000000000000002E /* CostumeGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000002E /* CostumeGalleryView.swift */; };
+		B1000000000000000000002F /* SyncedSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000002F /* SyncedSettings.swift */; };
 		B1000000000000000000002A /* FlockShareCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000002A /* FlockShareCardView.swift */; };
 		DC09999B2F634FA600FE7A6F /* SheepCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = DC09999A2F634FA600FE7A6F /* SheepCalendar */; };
 		DC0999A32F6409B800FE7A6F /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC0999A22F6409B700FE7A6F /* WidgetKit.framework */; };
@@ -142,6 +143,7 @@
 		A1000000000000000000002C /* DiaryImportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiaryImportService.swift; sourceTree = "<group>"; };
 		A1000000000000000000002D /* ImportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportView.swift; sourceTree = "<group>"; };
 		A1000000000000000000002E /* CostumeGalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CostumeGalleryView.swift; sourceTree = "<group>"; };
+		A1000000000000000000002F /* SyncedSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncedSettings.swift; sourceTree = "<group>"; };
 		A1000000000000000000002A /* FlockShareCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlockShareCardView.swift; sourceTree = "<group>"; };
 		DC0999A12F6409B700FE7A6F /* NoDiaryWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NoDiaryWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC0999A22F6409B700FE7A6F /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -284,6 +286,7 @@
 				A10000000000000000000029 /* ReviewPromptService.swift */,
 				A1000000000000000000002B /* AppLanguage.swift */,
 				A1000000000000000000002C /* DiaryImportService.swift */,
+				A1000000000000000000002F /* SyncedSettings.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -505,6 +508,7 @@
 				B1000000000000000000002C /* DiaryImportService.swift in Sources */,
 				B1000000000000000000002D /* ImportView.swift in Sources */,
 				B1000000000000000000002E /* CostumeGalleryView.swift in Sources */,
+				B1000000000000000000002F /* SyncedSettings.swift in Sources */,
 				B1000000000000000000002A /* FlockShareCardView.swift in Sources */,
 				B10000000000000000000025 /* WritingPromptService.swift in Sources */,
 				B10000000000000000000026 /* WeatherService.swift in Sources */,

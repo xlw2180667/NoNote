@@ -10,6 +10,7 @@ private struct BannerScrollOffsetKey: PreferenceKey {
 struct FlockBannerView: View {
     let diaryDates: Set<String>
     @ObservedObject var storeService: StoreService
+    @ObservedObject private var synced = SyncedSettings.shared
     @State private var showDetail = false
     @State private var sheepScrollOffset: CGFloat = 0
 

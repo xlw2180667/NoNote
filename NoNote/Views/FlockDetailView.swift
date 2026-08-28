@@ -10,6 +10,7 @@ private struct ScrollOffsetKey: PreferenceKey {
 struct FlockDetailView: View {
     let diaryDates: Set<String>
     @ObservedObject var storeService: StoreService
+    @ObservedObject private var synced = SyncedSettings.shared
     @Environment(\.dismiss) private var dismiss
     @State private var sheepScrollOffset: CGFloat = 0
     @State private var purchaseError: String?
@@ -30,6 +31,9 @@ struct FlockDetailView: View {
                 VStack(spacing: 20) {
                     headerSection(state: state)
                     pastureScene(state: state)
+                        #if DEBUG
+                        .onAppear { openDemoSheepIfRequested(state) }
+                        #endif
                     progressCard(state: state)
                     if !storeService.isPro {
                         proUnlockCard(state: state)
@@ -172,6 +176,16 @@ struct FlockDetailView: View {
         .cornerRadius(20)
         .shadow(color: .black.opacity(0.15), radius: 12, y: 4)
     }
+
+    #if DEBUG
+    /// Screenshot/QA: `-DemoZoomSheep N` opens the Nth sheep's card without a tap.
+    private func openDemoSheepIfRequested(_ state: FlockState) {
+        guard let raw = UserDefaults.standard.string(forKey: "DemoZoomSheep"),
+              let index = Int(raw), zoomedSheep == nil,
+              state.activeSheep.indices.contains(index) else { return }
+        openSheep(state.activeSheep[index])
+    }
+    #endif
 
     private func openSheep(_ def: SheepDefinition) {
         nameDraft = FlockService.loadName(for: def.id)
