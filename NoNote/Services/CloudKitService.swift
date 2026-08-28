@@ -173,6 +173,32 @@ final class CloudKitService: ObservableObject {
         }
     }
 
+    // MARK: - Year Prefetch
+
+    /// Pull a whole year's months into the cache.
+    ///
+    /// The month picker marks months that hold entries, and `diaryDates` only ever knew about
+    /// months that had already been fetched — so on a fresh install every month looked empty,
+    /// which is worse than showing nothing. Warming the year makes those marks truthful, and
+    /// paging into any of those months is then instant.
+    ///
+    /// Failures are ignored on purpose: offline just means the marks stay as they were.
+    func prefetchYear(_ year: Int) async {
+        let calendar = Calendar.current
+        let now = Date()
+        let thisYear = calendar.component(.year, from: now)
+        let lastMonth = year == thisYear ? calendar.component(.month, from: now) : 12
+        guard year <= thisYear else { return }
+
+        await withTaskGroup(of: Void.self) { group in
+            for month in 1...lastMonth {
+                group.addTask { [weak self] in
+                    try? await self?.fetchDiaries(monthAndYear: "\(month)-\(year)")
+                }
+            }
+        }
+    }
+
     // MARK: - Bulk Import
 
     struct ImportSummary {

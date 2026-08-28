@@ -82,6 +82,12 @@ tools/
 - 否定词压不住物件固有联想:`no fences` 挡不住 "meadow" 带出来的栅栏,得换主体措辞。
 - 产物存 PNG 会很大(5 张 3.0MB)。无 alpha 的背景一律转 JPEG q88 → 368KB,肉眼无差。
 
+- **`diaryDates` is not the diary's full history.** It is `Set(diaryCache.keys)` — only the
+  months already fetched from CloudKit. On a fresh install it can be nearly empty even for a
+  user with years of entries. Never derive a range, a bound, or an "is it empty" answer from
+  it: the month picker did, and it locked the user out of their own past. `prefetchYear(_:)`
+  warms a whole year when the picker shows it.
+
 ## App Store Connect & screenshots
 
 `tools/asc/README.md` has the full flow. Short version — six ASC locales

@@ -81,7 +81,7 @@ struct CalendarView: View {
             }
         }
         .sheet(isPresented: $showMonthPicker) {
-            MonthPickerView(displayedMonth: $displayedMonth, diaryDates: cloudKit.diaryDates)
+            MonthPickerView(displayedMonth: $displayedMonth, cloudKit: cloudKit)
         }
         .sheet(isPresented: $showStats) {
             MonthlyStatsView(

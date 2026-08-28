@@ -10,7 +10,7 @@ import SwiftUI
 /// your history actually landed.
 struct MonthPickerView: View {
     @Binding var displayedMonth: Date
-    let diaryDates: Set<String>
+    @ObservedObject var cloudKit: CloudKitService
     @Environment(\.dismiss) private var dismiss
 
     @State private var year: Int
@@ -18,17 +18,24 @@ struct MonthPickerView: View {
     private let calendar = Calendar.current
     private let columns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
 
-    init(displayedMonth: Binding<Date>, diaryDates: Set<String>) {
+    init(displayedMonth: Binding<Date>, cloudKit: CloudKitService) {
         _displayedMonth = displayedMonth
-        self.diaryDates = diaryDates
+        self.cloudKit = cloudKit
         _year = State(initialValue: Calendar.current.component(.year, from: displayedMonth.wrappedValue))
     }
 
-    /// Years worth offering: from the oldest entry to now. Without any entries, just this year.
+    private var diaryDates: Set<String> { cloudKit.diaryDates }
+
+    /// How far back the stepper may go.
+    ///
+    /// Deliberately NOT derived from `diaryDates`: that set only holds months already fetched
+    /// from CloudKit, so on a fresh install it would pin the range to a single year and lock
+    /// the user out of their own history. A generous floor costs nothing — an empty year just
+    /// shows no marks — while a tight one is a dead end.
     private var yearRange: ClosedRange<Int> {
         let thisYear = calendar.component(.year, from: Date())
-        let years = diaryDates.compactMap { Int($0.split(separator: "-").last ?? "") }
-        return (years.min() ?? thisYear)...thisYear
+        let cachedOldest = diaryDates.compactMap { Int($0.split(separator: "-").last ?? "") }.min()
+        return min(cachedOldest ?? thisYear, thisYear - 20)...thisYear
     }
 
     private var monthSymbols: [String] {
@@ -111,5 +118,6 @@ struct MonthPickerView: View {
         .padding(20)
         .presentationDetents([.height(320)])
         .background(Color.surface.ignoresSafeArea())
+        .task(id: year) { await cloudKit.prefetchYear(year) }
     }
 }
