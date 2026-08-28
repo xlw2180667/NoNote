@@ -18,11 +18,13 @@ struct RootView: View {
     @AppStorage("appLockEnabled") private var appLockEnabled = false
     @State private var isUnlocked = false
 
-    /// Screenshot demo mode seeds its own weather, and a live fetch would pop the
-    /// system location prompt over the shot.
+    /// Any screenshot/QA launch. Demo data carries its own weather, and a live fetch would
+    /// pop the system location prompt over the shot — an unanswered one then stays wedged in
+    /// SpringBoard and lands on every subsequent capture.
     private var isDemoMode: Bool {
         #if DEBUG
         ProcessInfo.processInfo.arguments.contains("-DemoData")
+            || UserDefaults.standard.string(forKey: "DemoScreen") != nil
         #else
         false
         #endif

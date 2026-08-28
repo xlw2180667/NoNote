@@ -13,6 +13,7 @@ struct CalendarView: View {
     @State private var errorMessage = ""
     @State private var showSearch = false
     @State private var showStats = false
+    @State private var showMonthPicker = false
     #if DEBUG
     @State private var showDemoFlock = false
     @State private var showDemoStats = false
@@ -55,6 +56,7 @@ struct CalendarView: View {
                 case "lock": showDemoLock = true
                 case "import": showDemoImport = true
                 case "costumes": showDemoCostumes = true
+                case "monthpicker": showMonthPicker = true
                 case "lastMonth": demoShowLastMonth()
                 default: break
                 }
@@ -77,6 +79,9 @@ struct CalendarView: View {
             SearchView(cloudKit: cloudKit) { dateString in
                 navigateToDate(dateString)
             }
+        }
+        .sheet(isPresented: $showMonthPicker) {
+            MonthPickerView(displayedMonth: $displayedMonth, diaryDates: cloudKit.diaryDates)
         }
         .sheet(isPresented: $showStats) {
             MonthlyStatsView(
@@ -237,9 +242,18 @@ struct CalendarView: View {
                             .foregroundColor(.textPrimary)
                     }
                     Spacer()
-                    Text(monthYearString(for: date))
-                        .font(.custom(AppFonts.regular, size: 17))
+                    // Tappable: stepping a month at a time does not scale to an imported history
+                    Button { showMonthPicker = true } label: {
+                        HStack(spacing: 4) {
+                            Text(monthYearString(for: date))
+                                .font(.custom(AppFonts.regular, size: 17))
+                            Image(systemName: "chevron.down")
+                                .font(.system(size: 11, weight: .semibold))
+                                .foregroundColor(.textSecondary)
+                        }
                         .foregroundColor(.textPrimary)
+                        .contentShape(Rectangle())
+                    }
                     Spacer()
                     Button(action: forward) {
                         Image(systemName: "chevron.right")
