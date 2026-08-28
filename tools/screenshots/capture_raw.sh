@@ -35,14 +35,17 @@ locale_for() {
   esac
 }
 
-# 每张图: 文件名|DemoScreen|外观
+# 每张图: 文件名|DemoScreen|外观|牧场季节
+# 牧场固定成 autumn 而不是跟 .auto 走当前月份 —— 截图会在商店里挂好几个月,不该跟着采集
+# 那天的季节走。暖琥珀色也是五张里小羊最跳的一张(白色/奶油色的羊在夏天的黄绿草地上会发闷)。
+# 深色那张配 night,深色模式 + 星空牧场是自洽的一组。
 SHOTS=(
-  "1-home|lastMonth|light"
-  "2-flock|flock|light"
-  "3-editor|editor|light"
-  "4-stats|stats|light"
-  "5-home-dark|lastMonth|dark"
-  "6-privacy|lock|light"
+  "1-home|lastMonth|light|autumn"
+  "2-flock|flock|light|autumn"
+  "3-editor|editor|light|autumn"
+  "4-stats|stats|light|autumn"
+  "5-home-dark|lastMonth|dark|night"
+  "6-privacy|lock|light|autumn"
 )
 
 echo "==> 设备 $DEVICE"
@@ -77,16 +80,24 @@ for lang in "${LANGS[@]}"; do
   mkdir -p "$out"
   echo "==> $lang ($loc)"
   for entry in "${SHOTS[@]}"; do
-    IFS='|' read -r name screen appearance <<<"$entry"
+    IFS='|' read -r name screen appearance season <<<"$entry"
     xcrun simctl ui "$UDID" appearance "$appearance" >/dev/null
 
-    # 每张图都从干净状态起:关掉 App,清掉上一次留下的 UserDefaults 开关
+    # 每张图都从干净状态起:关掉 App,清掉上一次留下的 UserDefaults 开关。
+    # terminate 是异步的 —— 不等它真的退干净就 launch,截图会拍到上一张的残影
+    # (实测拍到过上一个语言的锁屏)。所以先等进程消失。
     xcrun simctl terminate "$UDID" "$BUNDLE_ID" >/dev/null 2>&1 || true
+    for _ in $(seq 1 20); do
+      xcrun simctl spawn "$UDID" launchctl list 2>/dev/null | grep -q "$BUNDLE_ID" || break
+      sleep 0.3
+    done
+
     xcrun simctl launch "$UDID" "$BUNDLE_ID" \
       -AppleLanguages "($lang)" -AppleLocale "$loc" \
-      -DemoData -DemoPro -dontShowAlert YES -DemoScreen "$screen" >/dev/null
+      -DemoData -DemoPro -dontShowAlert YES -DemoScreen "$screen" \
+      -pastureSeason "$season" >/dev/null
 
-    sleep 4    # 等演示数据落地 + 目标界面的 0.8s 延迟动画走完
+    sleep 6    # 演示数据落地 + 目标界面的 0.8s 延迟 + 首帧渲染
     xcrun simctl io "$UDID" screenshot --type=png "$out/$name.png" >/dev/null
     echo "   $lang/$name.png ✓"
   done
