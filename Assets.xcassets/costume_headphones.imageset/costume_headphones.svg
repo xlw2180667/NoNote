@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 56">
+  <defs>
+    <linearGradient id="cupGrad" x1="0.3" y1="0" x2="0.8" y2="1">
+      <stop offset="0%" stop-color="#5F6674"/>
+      <stop offset="100%" stop-color="#343A45"/>
+    </linearGradient>
+  </defs>
+  <!-- Band -->
+  <path d="M13,34 Q50,0 87,34" stroke="#454C59" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <path d="M16,32 Q50,5 84,32" stroke="#79808E" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.7"/>
+  <!-- Cups -->
+  <rect x="2" y="26" width="24" height="28" rx="9" fill="url(#cupGrad)"/>
+  <rect x="74" y="26" width="24" height="28" rx="9" fill="url(#cupGrad)"/>
+  <!-- Pads -->
+  <rect x="7" y="31" width="14" height="18" rx="6" fill="#8C93A1" opacity="0.55"/>
+  <rect x="79" y="31" width="14" height="18" rx="6" fill="#8C93A1" opacity="0.55"/>
+  <!-- Accent -->
+  <circle cx="14" cy="40" r="2.6" fill="#6BBF59"/>
+  <circle cx="86" cy="40" r="2.6" fill="#6BBF59"/>
+</svg>

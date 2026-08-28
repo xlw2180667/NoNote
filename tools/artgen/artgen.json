@@ -1,0 +1,90 @@
+{
+  "config": {
+    "_note": "NoDiary 的美术生成配置。只用来做背景/氛围插画——小羊本体和配饰是 SwiftUI Canvas 矢量 + SVG，不要让扩散模型碰它们(扩散模型做不到同一角色换 11 种颜色的一致性,而且 20px 的日历格子里光栅会糊)。所有资产都是 texture 满幅,因此一律 no_anchor,风格词写进各自 prompt。",
+    "style_anchor": "soft cozy storybook landscape, gouache painting with visible gentle brush texture, broad flat colour fields, muted pastel palette of sage green and pale sky blue, soft diffuse daylight, calm and almost empty, no animals, no people, no buildings, no text, not photorealistic, not busy",
+    "negative": "sheep, animals, people, buildings, houses, fences, roads, text, watermark, signature, frame, border, harsh shadows, high contrast, dark, saturated neon, busy detail, clutter, photo, 3d render, low quality, blurry",
+    "out_dir": "../../Marketing/Art",
+    "sizes": {
+      "@3x": 540,
+      "@2x": 360,
+      "": 180
+    },
+    "base_seed": 20260828,
+    "gen_size": 1024,
+    "margin": 0.06
+  },
+  "assets": [
+    {
+      "name": "shot_backdrop_a",
+      "mode": "texture",
+      "no_anchor": true,
+      "width": 704,
+      "height": 1536,
+      "prompt": "soft cozy storybook landscape painted in gouache with gentle visible brush texture, a wide calm pale blue sky filling the upper two thirds with a few soft flat clouds, a low rolling green meadow horizon across the lower third, broad flat colour fields, muted pastel palette of sage green and pale sky blue, soft diffuse daylight, fills the whole frame edge to edge, no animals, no people, no buildings, no fences, no text, not photorealistic, not busy"
+    },
+    {
+      "name": "shot_backdrop_b",
+      "mode": "texture",
+      "no_anchor": true,
+      "width": 704,
+      "height": 1536,
+      "prompt": "soft cozy storybook landscape painted in gouache with gentle visible brush texture, a warm cream and pale peach dawn sky filling the upper two thirds, a low soft green meadow across the lower third with two gentle rolling hills, broad flat colour fields, muted pastel palette, soft diffuse morning light, fills the whole frame edge to edge, no animals, no people, no buildings, no fences, no text, not photorealistic, not busy"
+    },
+    {
+      "name": "shot_backdrop_c",
+      "mode": "texture",
+      "no_anchor": true,
+      "width": 704,
+      "height": 1536,
+      "prompt": "soft cozy storybook landscape painted in gouache with gentle visible brush texture, a pale mint and sky blue sky filling the upper two thirds with soft scattered clouds, a low meadow of small pale wildflowers across the lower third, broad flat colour fields, muted pastel palette of sage green and cream, soft diffuse daylight, fills the whole frame edge to edge, no animals, no people, no buildings, no fences, no text, not photorealistic, not busy"
+    },
+    {
+      "name": "shot_backdrop_d",
+      "mode": "texture",
+      "no_anchor": true,
+      "width": 704,
+      "height": 1536,
+      "prompt": "soft cozy storybook landscape painted in gouache with gentle visible brush texture, a very pale washed blue sky filling almost the whole frame, a single low soft green hill along the bottom edge only, mostly empty calm sky, broad flat colour fields, muted pastel palette, soft diffuse daylight, fills the whole frame edge to edge, no animals, no people, no buildings, no fences, no text, not photorealistic, not busy"
+    },
+    {
+      "name": "pasture_spring",
+      "mode": "texture",
+      "no_anchor": true,
+      "width": 1216,
+      "height": 384,
+      "prompt": "soft cozy storybook panorama painted in gouache with gentle visible brush texture, a wide expanse of fresh green spring grass with tiny pale pink wildflowers, open unbounded land with nothing built on it, pale blue spring sky, wide low horizon, broad flat colour fields, soft diffuse daylight, the lower half is a calm open field with no detail and no clutter, fills the whole frame edge to edge, no fence, no fence posts, no railing, no wire, no path, no animals, no people, no buildings, no text, not photorealistic, not busy"
+    },
+    {
+      "name": "pasture_summer",
+      "mode": "texture",
+      "no_anchor": true,
+      "width": 1216,
+      "height": 384,
+      "prompt": "soft cozy storybook meadow panorama painted in gouache with gentle visible brush texture, deep warm green grass, clear bright blue summer sky with two small soft white clouds, sunny and calm, wide low horizon, broad flat colour fields, soft diffuse daylight, the lower half is a calm open field with no detail and no clutter so characters can stand on it, fills the whole frame edge to edge, no animals, no people, no buildings, no fences, no paths, no text, not photorealistic, not busy"
+    },
+    {
+      "name": "pasture_autumn",
+      "mode": "texture",
+      "no_anchor": true,
+      "width": 1216,
+      "height": 384,
+      "prompt": "soft cozy storybook meadow panorama painted in gouache with gentle visible brush texture, golden amber and olive grass, warm hazy apricot sky low sun, a few small drifting leaves, wide low horizon, broad flat colour fields, soft diffuse daylight, the lower half is a calm open field with no detail and no clutter so characters can stand on it, fills the whole frame edge to edge, no animals, no people, no buildings, no fences, no paths, no text, not photorealistic, not busy"
+    },
+    {
+      "name": "pasture_winter",
+      "mode": "texture",
+      "no_anchor": true,
+      "width": 1216,
+      "height": 384,
+      "prompt": "soft cozy storybook field panorama painted in gouache with gentle visible brush texture, a winter field of frost covered olive and dusty brown grass in mid tone, only a few thin patches of snow, cold slate blue dusk sky, the ground is clearly darker than the sky so pale objects stand out against it, wide low horizon, broad flat colour fields, the lower half is a calm open field with no detail and no clutter, fills the whole frame edge to edge, no snow drifts, no white ground, no animals, no people, no buildings, no fences, no text, not photorealistic, not busy"
+    },
+    {
+      "name": "pasture_night",
+      "mode": "texture",
+      "no_anchor": true,
+      "width": 1216,
+      "height": 384,
+      "prompt": "soft cozy storybook meadow panorama painted in gouache with gentle visible brush texture, dark blue green meadow under a deep navy night sky full of small soft stars, gentle moonlight glow near the horizon, calm and quiet, wide low horizon, broad flat colour fields, soft diffuse daylight, the lower half is a calm open field with no detail and no clutter so characters can stand on it, fills the whole frame edge to edge, no animals, no people, no buildings, no fences, no paths, no text, not photorealistic, not busy"
+    }
+  ]
+}

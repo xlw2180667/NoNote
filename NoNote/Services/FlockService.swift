@@ -5,7 +5,109 @@ enum SheepAccessory: String {
 }
 
 enum SheepCostume: String, CaseIterable {
-    case none, scarf, sunglasses, bowtie, santaHat
+    case none
+    case scarf, bandana, bowtie                    // neck
+    case sunglasses, headphones, earmuffs          // face / ears
+    case flowerCrown, ribbon, strawHat, beret, beanie, santaHat   // head
+
+    /// Asset name, and where the art sits on the sheep as a fraction of its size.
+    /// Kept as data rather than a switch in the view — twelve cases of near-identical
+    /// `Image().resizable().frame().offset()` is a table, not control flow.
+    struct Placement {
+        let asset: String
+        let widthFactor: CGFloat
+        let x: CGFloat
+        let y: CGFloat
+    }
+
+    var placement: Placement? {
+        switch self {
+        case .none:        return nil
+        case .scarf:       return .init(asset: "costume_scarf",       widthFactor: 0.50, x: 0,     y: 0.38)
+        case .bandana:     return .init(asset: "costume_bandana",     widthFactor: 0.48, x: 0,     y: 0.36)
+        case .bowtie:      return .init(asset: "costume_bowtie",      widthFactor: 0.35, x: 0,     y: 0.30)
+        case .sunglasses:  return .init(asset: "costume_sunglasses",  widthFactor: 0.48, x: 0,     y: 0.01)
+        case .headphones:  return .init(asset: "costume_headphones",  widthFactor: 0.66, x: 0,     y: -0.10)
+        case .earmuffs:    return .init(asset: "costume_earmuffs",    widthFactor: 0.68, x: 0,     y: -0.14)
+        case .flowerCrown: return .init(asset: "costume_flowercrown", widthFactor: 0.68, x: 0,     y: -0.19)
+        case .ribbon:      return .init(asset: "costume_ribbon",      widthFactor: 0.40, x: 0.18,  y: -0.26)
+        case .strawHat:    return .init(asset: "costume_strawhat",    widthFactor: 0.64, x: 0,     y: -0.26)
+        case .beret:       return .init(asset: "costume_beret",       widthFactor: 0.52, x: 0.04,  y: -0.28)
+        case .beanie:      return .init(asset: "costume_beanie",      widthFactor: 0.54, x: 0,     y: -0.32)
+        case .santaHat:    return .init(asset: "costume_santahat",    widthFactor: 0.42, x: 0.02,  y: -0.30)
+        }
+    }
+
+    var localizedNameKey: String {
+        switch self {
+        case .none:        return "#costumeNone"
+        case .scarf:       return "#costumeScarf"
+        case .bandana:     return "#costumeBandana"
+        case .bowtie:      return "#costumeBowtie"
+        case .sunglasses:  return "#costumeSunglasses"
+        case .headphones:  return "#costumeHeadphones"
+        case .earmuffs:    return "#costumeEarmuffs"
+        case .flowerCrown: return "#costumeFlowerCrown"
+        case .ribbon:      return "#costumeRibbon"
+        case .strawHat:    return "#costumeStrawHat"
+        case .beret:       return "#costumeBeret"
+        case .beanie:      return "#costumeBeanie"
+        case .santaHat:    return "#costumeSantaHat"
+        }
+    }
+}
+
+/// The painted pasture behind the flock. A Pro cosmetic — free users keep the
+/// procedural sky-and-hills background drawn in `FlockBannerView`.
+///
+/// Deliberately user-selectable rather than purely automatic: deriving the season from the
+/// month alone is wrong for half the planet, and "pick the one you like" is a nicer feature
+/// than a hemisphere guess. `.auto` follows the northern calendar and swaps to night after dark.
+enum PastureSeason: String, CaseIterable, Identifiable {
+    case auto, spring, summer, autumn, winter, night
+
+    var id: String { rawValue }
+
+    var localizedNameKey: String {
+        switch self {
+        case .auto:   return "#pastureAuto"
+        case .spring: return "#pastureSpring"
+        case .summer: return "#pastureSummer"
+        case .autumn: return "#pastureAutumn"
+        case .winter: return "#pastureWinter"
+        case .night:  return "#pastureNight"
+        }
+    }
+
+    /// Asset for this season; `.auto` resolves against the clock first.
+    var assetName: String? {
+        switch self {
+        case .auto:   return PastureSeason.resolvedAuto().assetName
+        case .spring: return "pasture_spring"
+        case .summer: return "pasture_summer"
+        case .autumn: return "pasture_autumn"
+        case .winter: return "pasture_winter"
+        case .night:  return "pasture_night"
+        }
+    }
+
+    static func resolvedAuto(date: Date = Date(), calendar: Calendar = .current) -> PastureSeason {
+        let hour = calendar.component(.hour, from: date)
+        if hour >= 20 || hour < 5 { return .night }
+        switch calendar.component(.month, from: date) {
+        case 3...5:   return .spring
+        case 6...8:   return .summer
+        case 9...11:  return .autumn
+        default:      return .winter
+        }
+    }
+
+    /// What the banner should draw right now: nil means the free procedural pasture.
+    static func current(isPro: Bool) -> PastureSeason? {
+        guard isPro else { return nil }
+        let raw = UserDefaults.standard.string(forKey: "pastureSeason") ?? PastureSeason.auto.rawValue
+        return PastureSeason(rawValue: raw) ?? .auto
+    }
 }
 
 struct SheepDefinition: Identifiable {
@@ -14,6 +116,7 @@ struct SheepDefinition: Identifiable {
     let accessory: SheepAccessory
     let isSpecial: Bool
     var costume: SheepCostume = .none
+    var name: String = ""
 }
 
 struct FlockState {
@@ -73,6 +176,25 @@ enum FlockService {
         UserDefaults.standard.set(costume.rawValue, forKey: "sheepCostume_\(sheepId)")
     }
 
+    /// Sheep names live next to costumes: same per-sheep UserDefaults pattern, same Pro gate.
+    /// Trimmed and length-capped on the way in so a stray paste can't blow up the layout.
+    static let maxSheepNameLength = 12
+
+    static func loadName(for sheepId: String) -> String {
+        UserDefaults.standard.string(forKey: "sheepName_\(sheepId)") ?? ""
+    }
+
+    static func saveName(_ name: String, for sheepId: String) {
+        let cleaned = String(name.trimmingCharacters(in: .whitespacesAndNewlines)
+            .prefix(maxSheepNameLength))
+        let key = "sheepName_\(sheepId)"
+        if cleaned.isEmpty {
+            UserDefaults.standard.removeObject(forKey: key)
+        } else {
+            UserDefaults.standard.set(cleaned, forKey: key)
+        }
+    }
+
     static func computeFlockState(diaryDates: Set<String>, isPro: Bool = false) -> FlockState {
         let currentStreak = StatsService.currentStreak(dates: diaryDates)
         let bestStreak = StatsService.longestStreak(dates: diaryDates)
@@ -100,6 +222,7 @@ enum FlockService {
         // Load persisted costumes for each sheep
         for i in sheep.indices {
             sheep[i].costume = loadCostume(for: sheep[i].id)
+            sheep[i].name = loadName(for: sheep[i].id)
         }
 
         // Two-track progress

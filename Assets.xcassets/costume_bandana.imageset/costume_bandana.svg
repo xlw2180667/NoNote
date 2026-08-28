@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80">
+  <defs>
+    <linearGradient id="bandGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6FB8C9"/>
+      <stop offset="100%" stop-color="#47899B"/>
+    </linearGradient>
+  </defs>
+  <!-- Neck band -->
+  <path d="M10,10 Q60,4 110,10 L110,26 Q60,32 10,26 Z" fill="url(#bandGrad)"/>
+  <!-- Triangle drape -->
+  <path d="M30,25 L90,25 L60,68 Z" fill="url(#bandGrad)"/>
+  <path d="M36,29 L84,29 L60,63 Z" fill="white" opacity="0.12"/>
+  <!-- Paisley dots -->
+  <g fill="#FDF6E4" opacity="0.75">
+    <circle cx="48" cy="36" r="2.6"/><circle cx="72" cy="36" r="2.6"/>
+    <circle cx="60" cy="46" r="2.6"/><circle cx="52" cy="54" r="2.2"/><circle cx="68" cy="54" r="2.2"/>
+  </g>
+  <!-- Knot -->
+  <ellipse cx="60" cy="24" rx="9" ry="7" fill="#5AA0B2"/>
+  <ellipse cx="57" cy="22" rx="3.4" ry="2.6" fill="white" opacity="0.3"/>
+</svg>

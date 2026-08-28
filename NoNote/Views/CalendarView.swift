@@ -18,6 +18,8 @@ struct CalendarView: View {
     @State private var showDemoStats = false
     @State private var showDemoShareCard = false
     @State private var showDemoLock = false
+    @State private var showDemoImport = false
+    @State private var showDemoCostumes = false
     #endif
 
     private let dateFormatter: DateFormatter = {
@@ -51,6 +53,8 @@ struct CalendarView: View {
                 case "flock": showDemoFlock = true
                 case "sharecard": showDemoShareCard = true
                 case "lock": showDemoLock = true
+                case "import": showDemoImport = true
+                case "costumes": showDemoCostumes = true
                 case "lastMonth": demoShowLastMonth()
                 default: break
                 }
@@ -95,6 +99,10 @@ struct CalendarView: View {
         .fullScreenCover(isPresented: $showDemoLock) {
             LockScreenView { }
         }
+        .sheet(isPresented: $showDemoImport) {
+            NavigationStack { ImportView(cloudKit: cloudKit) }
+        }
+        .sheet(isPresented: $showDemoCostumes) { CostumeGalleryView() }
         .fullScreenCover(isPresented: $showDemoShareCard) {
             FlockShareCardView(state: FlockService.computeFlockState(
                 diaryDates: cloudKit.diaryDates, isPro: storeService.isPro))

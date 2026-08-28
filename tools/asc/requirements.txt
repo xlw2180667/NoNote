@@ -1,0 +1,5 @@
+# tools/asc 脚本依赖(HTTP 用标准库 urllib,无需 requests)
+# ES256 JWT 签名:
+cryptography>=41.0
+# tools/screenshots/make_captioned.py 加框用:
+pillow>=10.0

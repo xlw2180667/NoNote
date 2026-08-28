@@ -173,6 +173,86 @@ final class CloudKitService: ObservableObject {
         }
     }
 
+    // MARK: - Bulk Import
+
+    struct ImportSummary {
+        var imported = 0
+        /// Days that already had text — never overwritten.
+        var skippedExisting = 0
+        var uploaded = 0
+        var failedUpload = 0
+    }
+
+    /// Writes imported entries locally, then pushes them to CloudKit a few at a time.
+    ///
+    /// Local first on purpose: the calendar fills in immediately and the data is safe even if
+    /// the upload is interrupted. Anything that does not make it keeps `needsUpload = true`
+    /// and is retried by `uploadPendingEntries()` on the next launch.
+    ///
+    /// Days that already hold text are skipped, never merged over — an import must not be able
+    /// to destroy something the user actually wrote.
+    func importEntries(_ entries: [ImportedEntry],
+                       progress: @escaping (Int, Int) -> Void) async -> ImportSummary {
+        var summary = ImportSummary()
+        var toUpload: [(dateKey: String, date: Date, text: String, mood: String?)] = []
+
+        for entry in entries {
+            let existing = diaryCache[entry.dateKey]?.text ?? ""
+            if !existing.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                summary.skippedExisting += 1
+                continue
+            }
+            var cacheEntry = DiaryCacheEntry(text: entry.text)
+            cacheEntry.mood = entry.mood
+            cacheEntry.needsUpload = true
+            diaryCache[entry.dateKey] = cacheEntry
+            diaryDates.insert(entry.dateKey)
+            summary.imported += 1
+            toUpload.append((entry.dateKey, entry.date, entry.text, entry.mood))
+        }
+
+        persistLocally()
+        SharedDataStore.update(from: self)
+        progress(0, toUpload.count)
+
+        // A few at a time: hundreds of parallel CKQuery + save pairs get throttled by CloudKit
+        // and would spike memory for no gain.
+        let batchSize = 4
+        var done = 0
+        for start in stride(from: 0, to: toUpload.count, by: batchSize) {
+            let batch = Array(toUpload[start..<min(start + batchSize, toUpload.count)])
+            await withTaskGroup(of: (String, Bool).self) { group in
+                for item in batch {
+                    group.addTask { [weak self] in
+                        guard let self else { return (item.dateKey, false) }
+                        do {
+                            try await self.saveDiaryToCloud(text: item.text, date: item.date,
+                                                            mood: item.mood, weather: nil, photos: [])
+                            return (item.dateKey, true)
+                        } catch {
+                            print("CloudKit: import upload failed for \(item.dateKey) — \(error)")
+                            return (item.dateKey, false)
+                        }
+                    }
+                }
+                for await (dateKey, ok) in group {
+                    if ok {
+                        diaryCache[dateKey]?.needsUpload = false
+                        summary.uploaded += 1
+                    } else {
+                        summary.failedUpload += 1
+                    }
+                    done += 1
+                    progress(done, toUpload.count)
+                }
+            }
+            persistLocally()
+        }
+
+        SharedDataStore.update(from: self)
+        return summary
+    }
+
     // MARK: - Retry Pending Uploads
 
     private func uploadPendingEntries() {
@@ -184,7 +264,10 @@ final class CloudKitService: ObservableObject {
             print("CloudKit: retrying \(pending.count) pending upload(s)")
         }
 
-        for (dateString, entry) in pending {
+        // A bulk import can leave hundreds pending; firing them all at once gets throttled by
+        // CloudKit and spikes memory. Take a slice per launch — the rest retry next time.
+        let batch = pending.sorted { $0.key < $1.key }.prefix(25)
+        for (dateString, entry) in batch {
             guard let date = formatter.date(from: dateString) else { continue }
             let text = entry.text
             let mood = entry.mood
@@ -317,39 +400,110 @@ final class CloudKitService: ObservableObject {
     #if DEBUG
     private let debugMoods = ["happy", "good", "neutral", "sad", "happy", "good", "happy"]
     private let debugWeathers = ["0", "2", "63", "0", "2", "81", "0", "95", "2", "0", "53", "2", "0"]
-    private let debugTextsZh = [
-        "和朋友吃了顿超棒的早午餐 ☀️",
-        "终于读完那本书了，很受启发。",
-        "平静又高效的一天。",
-        "下雨天，在家煲了汤。",
-        "早上健身刷新了个人纪录！💪",
-        "去了趟菜市场，买了花。",
-        "和家人一起看电影 🎬",
-        "打卡了市中心新开的咖啡店。",
-        "在公园写生，樱花开了 🌸",
-        "把整个家打扫了一遍。",
-        "和老朋友聊了很久，很治愈。",
-        "自己动手做了意面，好吃！🍝",
-        "发现一家很可爱的小书店。",
-        "晨间瑜伽，沿着河边散步。",
-        "桌游之夜！玩到半夜 🎲",
-    ]
-    private let debugTexts = [
-        "Had a wonderful brunch with friends today. ☀️",
-        "Finished reading that book. Really inspiring.",
-        "Normal day at work. Peaceful and productive.",
-        "Rainy day. Stayed home and cooked soup.",
-        "Great workout this morning! New personal record. 💪",
-        "Went to the farmer's market. Beautiful flowers.",
-        "Movie night with the family. 🎬",
-        "Tried a new coffee shop downtown.",
-        "Sketching in the park. Cherry blossoms blooming. 🌸",
-        "Cleaned the whole apartment today.",
-        "Deep conversation with an old friend.",
-        "Homemade pasta from scratch. Delicious! 🍝",
-        "Discovered a lovely little bookshop.",
-        "Morning yoga. Quiet walk along the river.",
-        "Game night! Board games until midnight. 🎲",
+    /// Demo diary text for screenshots — one table per UI language.
+    private let debugDiaryTexts: [AppLanguage: [String]] = [
+        .en: [
+            "Had a wonderful brunch with friends today. ☀️",
+            "Finished reading that book. Really inspiring.",
+            "Normal day at work. Peaceful and productive.",
+            "Rainy day. Stayed home and cooked soup.",
+            "Great workout this morning! New personal record. 💪",
+            "Went to the farmer's market. Beautiful flowers.",
+            "Movie night with the family. 🎬",
+            "Tried a new coffee shop downtown.",
+            "Sketching in the park. Cherry blossoms blooming. 🌸",
+            "Cleaned the whole apartment today.",
+            "Deep conversation with an old friend.",
+            "Homemade pasta from scratch. Delicious! 🍝",
+            "Discovered a lovely little bookshop.",
+            "Morning yoga. Quiet walk along the river.",
+            "Game night! Board games until midnight. 🎲",
+        ],
+        .zhHans: [
+            "和朋友吃了顿超棒的早午餐 ☀️",
+            "终于读完那本书了，很受启发。",
+            "平静又高效的一天。",
+            "下雨天，在家煲了汤。",
+            "早上健身刷新了个人纪录！💪",
+            "去了趟菜市场，买了花。",
+            "和家人一起看电影 🎬",
+            "打卡了市中心新开的咖啡店。",
+            "在公园写生，樱花开了 🌸",
+            "把整个家打扫了一遍。",
+            "和老朋友聊了很久，很治愈。",
+            "自己动手做了意面，好吃！🍝",
+            "发现一家很可爱的小书店。",
+            "晨间瑜伽，沿着河边散步。",
+            "桌游之夜！玩到半夜 🎲",
+        ],
+        .zhHant: [
+            "和朋友吃了一頓超棒的早午餐 ☀️",
+            "終於把那本書讀完了，很受啟發。",
+            "平靜又有效率的一天。",
+            "下雨天，在家煮了湯。",
+            "早上健身刷新了個人紀錄！💪",
+            "去了一趟菜市場，買了花。",
+            "和家人一起看電影 🎬",
+            "去了市區新開的咖啡店。",
+            "在公園寫生，櫻花開了 🌸",
+            "把整個家都打掃了一遍。",
+            "和老朋友聊了很久，很療癒。",
+            "自己動手做了義大利麵，好吃！🍝",
+            "發現一家很可愛的小書店。",
+            "晨間瑜伽，沿著河邊散步。",
+            "桌遊之夜！玩到半夜 🎲",
+        ],
+        .ja: [
+            "友だちと最高のブランチ ☀️",
+            "あの本をやっと読み終えた。すごく刺激的。",
+            "おだやかで、はかどった一日。",
+            "雨の日。家でスープを煮こんだ。",
+            "朝トレで自己記録を更新！💪",
+            "朝市へ。きれいな花を買った。",
+            "家族で映画の夜 🎬",
+            "駅前にできたカフェに行ってみた。",
+            "公園でスケッチ。桜が満開 🌸",
+            "家じゅうを大そうじした。",
+            "旧友とじっくり話した。",
+            "パスタを一から手作り。おいしい！🍝",
+            "かわいい小さな本屋を見つけた。",
+            "朝ヨガ。川沿いをのんびり散歩。",
+            "ゲームの夜！深夜までボードゲーム 🎲",
+        ],
+        .ko: [
+            "친구들과 아주 좋은 브런치 ☀️",
+            "그 책을 드디어 다 읽었다. 정말 좋았어.",
+            "차분하고 알찬 하루.",
+            "비 오는 날. 집에서 국을 끓였다.",
+            "아침 운동에서 개인 기록 경신! 💪",
+            "시장에 다녀왔다. 꽃도 한 다발.",
+            "가족과 영화 보는 밤 🎬",
+            "시내에 새로 생긴 카페에 가 봤다.",
+            "공원에서 스케치. 벚꽃이 활짝 🌸",
+            "집 안을 전부 청소했다.",
+            "오랜 친구와 깊은 이야기.",
+            "파스타를 처음부터 직접. 맛있다! 🍝",
+            "아주 예쁜 작은 책방을 발견했다.",
+            "아침 요가. 강가를 천천히 걸었다.",
+            "게임의 밤! 자정까지 보드게임 🎲",
+        ],
+        .es: [
+            "Un brunch buenísimo con amigos. ☀️",
+            "Terminé ese libro. Muy inspirador.",
+            "Día tranquilo y productivo.",
+            "Día de lluvia. En casa haciendo sopa.",
+            "¡Buen entreno esta mañana! Récord personal. 💪",
+            "Fui al mercado. Flores preciosas.",
+            "Noche de película en familia. 🎬",
+            "Probé una cafetería nueva del centro.",
+            "Dibujando en el parque. Cerezos en flor. 🌸",
+            "Limpié toda la casa hoy.",
+            "Charla larga con un amigo de siempre.",
+            "Pasta casera desde cero. ¡Riquísima! 🍝",
+            "Descubrí una librería pequeña encantadora.",
+            "Yoga por la mañana. Paseo junto al río.",
+            "¡Noche de juegos! Mesa hasta medianoche. 🎲",
+        ],
     ]
 
     /// Generate test entries: `count` consecutive days ending today (streak = count).
@@ -364,8 +518,7 @@ final class CloudKitService: ObservableObject {
         diaryCache.removeAll()
 
         // Build a consecutive streak of `count` days ending at today (or yesterday if breakStreak)
-        let isChinese = Locale.preferredLanguages.first?.hasPrefix("zh") == true
-        let texts = isChinese ? debugTextsZh : debugTexts
+        let texts = AppLanguage.current.pick(debugDiaryTexts)
         let startOffset = breakStreak ? 1 : 0
         for i in startOffset..<(count + startOffset) {
             guard let date = cal.date(byAdding: .day, value: -i, to: today) else { continue }

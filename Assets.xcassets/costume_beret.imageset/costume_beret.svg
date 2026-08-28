@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 52">
+  <defs>
+    <linearGradient id="beretGrad" x1="0.25" y1="0" x2="0.8" y2="1">
+      <stop offset="0%" stop-color="#D9695F"/>
+      <stop offset="100%" stop-color="#A8403A"/>
+    </linearGradient>
+  </defs>
+  <!-- Slouched cap -->
+  <path d="M12,38 Q10,14 40,10 Q78,4 88,24 Q92,34 84,40 Q50,50 12,38 Z" fill="url(#beretGrad)"/>
+  <!-- Sheen -->
+  <path d="M24,24 Q34,14 54,13 Q40,20 32,30 Z" fill="white" opacity="0.14"/>
+  <!-- Band -->
+  <path d="M14,38 Q50,48 84,40 Q84,45 82,47 Q50,55 16,44 Z" fill="#8E332E"/>
+  <!-- Stalk -->
+  <circle cx="44" cy="9" r="4.4" fill="#C25850"/>
+  <circle cx="42.6" cy="7.6" r="1.8" fill="white" opacity="0.35"/>
+</svg>

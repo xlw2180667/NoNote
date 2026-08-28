@@ -15,6 +15,8 @@ struct FlockDetailView: View {
     @State private var purchaseError: String?
     @State private var zoomedSheep: SheepDefinition?
     @State private var previewCostume: SheepCostume?
+    @State private var nameDraft: String = ""
+    @FocusState private var nameFieldFocused: Bool
     @State private var shareImage: Image?
 
     private var flockState: FlockState {
@@ -102,16 +104,37 @@ struct FlockDetailView: View {
             // Enlarged sheep preview
             FlockSheepView(definition: previewDef, isAwake: isAwake, size: 160)
 
+            // Name — a sheep you named is no longer "the sixth sheep"
+            VStack(spacing: 4) {
+                TextField(String(localized: "#nameYourSheepPlaceholder"), text: $nameDraft)
+                    .font(.custom(AppFonts.bold, size: 20))
+                    .foregroundColor(.textPrimary)
+                    .multilineTextAlignment(.center)
+                    .focused($nameFieldFocused)
+                    .submitLabel(.done)
+                    .disabled(!storeService.isPro)
+                    .onSubmit { commitName(for: sheep.id) }
+                    .onChange(of: nameFieldFocused) { focused in
+                        if !focused { commitName(for: sheep.id) }
+                    }
+                Rectangle()
+                    .fill(Color.textSecondary.opacity(nameFieldFocused ? 0.35 : 0.12))
+                    .frame(width: 140, height: 1)
+            }
+
             // Title
             Text(String(localized: "#chooseCostume"))
                 .font(.custom(AppFonts.medium, size: 14))
                 .foregroundColor(.textSecondary)
 
-            // Costume selector
-            HStack(spacing: 12) {
-                ForEach(SheepCostume.allCases, id: \.self) { costume in
-                    costumeButton(costume: costume, isSelected: activeCostume == costume, sheepId: sheep.id)
+            // Costume selector — twelve wearables no longer fit a fixed row
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    ForEach(SheepCostume.allCases, id: \.self) { costume in
+                        costumeButton(costume: costume, isSelected: activeCostume == costume, sheepId: sheep.id)
+                    }
                 }
+                .padding(.horizontal, 4)
             }
 
             // Pro unlock button for free users
@@ -150,6 +173,21 @@ struct FlockDetailView: View {
         .shadow(color: .black.opacity(0.15), radius: 12, y: 4)
     }
 
+    private func openSheep(_ def: SheepDefinition) {
+        nameDraft = FlockService.loadName(for: def.id)
+        zoomedSheep = def
+    }
+
+    private func commitName(for sheepId: String) {
+        guard storeService.isPro else { return }
+        FlockService.saveName(nameDraft, for: sheepId)
+        nameDraft = FlockService.loadName(for: sheepId)
+        if var updated = zoomedSheep {
+            updated.name = nameDraft
+            zoomedSheep = updated
+        }
+    }
+
     private func costumeButton(costume: SheepCostume, isSelected: Bool, sheepId: String) -> some View {
         Button {
             withAnimation(.easeInOut(duration: 0.15)) {
@@ -180,31 +218,15 @@ struct FlockDetailView: View {
 
     @ViewBuilder
     private func costumeIcon(costume: SheepCostume) -> some View {
-        switch costume {
-        case .none:
+        if let placement = costume.placement {
+            Image(placement.asset)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 26, height: 26)
+        } else {
             Image(systemName: "circle.slash")
                 .font(.system(size: 18))
                 .foregroundColor(.textSecondary)
-        case .scarf:
-            Image("costume_scarf")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 26, height: 26)
-        case .sunglasses:
-            Image("costume_sunglasses")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 26, height: 26)
-        case .bowtie:
-            Image("costume_bowtie")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 26, height: 26)
-        case .santaHat:
-            Image("costume_santahat")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 26, height: 26)
         }
     }
 
@@ -312,14 +334,14 @@ struct FlockDetailView: View {
                 ForEach(Array(topRow.enumerated()), id: \.element.def.id) { i, item in
                     FlockSheepView(definition: item.def, isAwake: state.isAwake, size: sheepSize, isGhost: item.ghost)
                         .offset(y: CGFloat(i % 2 == 0 ? -2 : 3))
-                        .onTapGesture { withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { zoomedSheep = item.def } }
+                        .onTapGesture { withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { openSheep(item.def) } }
                 }
             }
             HStack(spacing: hSpacing) {
                 ForEach(Array(bottomRow.enumerated()), id: \.element.def.id) { i, item in
                     FlockSheepView(definition: item.def, isAwake: state.isAwake, size: sheepSize, isGhost: item.ghost)
                         .offset(y: CGFloat(i % 2 == 0 ? 0 : 4))
-                        .onTapGesture { withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { zoomedSheep = item.def } }
+                        .onTapGesture { withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { openSheep(item.def) } }
                 }
             }
             .padding(.leading, stagger)

@@ -3,6 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     @ObservedObject var cloudKit: CloudKitService
     @ObservedObject var storeService: StoreService
+    @AppStorage("pastureSeason") private var pastureSeason = PastureSeason.auto.rawValue
     @AppStorage("writingPromptsEnabled") private var promptsEnabled = true
 
     var body: some View {
@@ -41,6 +42,17 @@ struct SettingsView: View {
             }
 
             if storeService.isPro {
+                Picker(selection: $pastureSeason) {
+                    ForEach(PastureSeason.allCases) { season in
+                        Text(String(localized: String.LocalizationValue(season.localizedNameKey)))
+                            .tag(season.rawValue)
+                    }
+                } label: {
+                    Label(String(localized: "#pasture"), systemImage: "photo")
+                        .font(.custom(AppFonts.regular, size: 16))
+                        .foregroundColor(.textPrimary)
+                }
+
                 Label(String(localized: "#proUnlocked"), systemImage: "checkmark.seal.fill")
                     .font(.custom(AppFonts.regular, size: 16))
                     .foregroundColor(.accent)
@@ -62,13 +74,21 @@ struct SettingsView: View {
                 }
             }
 
+            NavigationLink {
+                ImportView(cloudKit: cloudKit)
+            } label: {
+                Label(String(localized: "#importDiary"), systemImage: "square.and.arrow.down")
+                    .font(.custom(AppFonts.regular, size: 16))
+                    .foregroundColor(.textPrimary)
+            }
+
             Link(destination: URL(string: "https://apps.apple.com/app/id1412453660?action=write-review")!) {
                 Label(String(localized: "#rateApp"), systemImage: "heart")
                     .font(.custom(AppFonts.regular, size: 16))
                     .foregroundColor(.textPrimary)
             }
 
-            Link(destination: URL(string: "https://smartkiitos.com/nodiary/privacy/")!) {
+            Link(destination: AppLanguage.siteURL("/nodiary/privacy/")) {
                 Label(String(localized: "#privacyPolicy"), systemImage: "hand.raised")
                     .font(.custom(AppFonts.regular, size: 16))
                     .foregroundColor(.textPrimary)

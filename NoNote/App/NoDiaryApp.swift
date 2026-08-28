@@ -18,6 +18,16 @@ struct RootView: View {
     @AppStorage("appLockEnabled") private var appLockEnabled = false
     @State private var isUnlocked = false
 
+    /// Screenshot demo mode seeds its own weather, and a live fetch would pop the
+    /// system location prompt over the shot.
+    private var isDemoMode: Bool {
+        #if DEBUG
+        ProcessInfo.processInfo.arguments.contains("-DemoData")
+        #else
+        false
+        #endif
+    }
+
     var body: some View {
         Group {
             if appLockEnabled && !isUnlocked {
@@ -39,13 +49,13 @@ struct RootView: View {
             #endif
             // Delay initial weather fetch so it doesn't block the first frame
             try? await Task.sleep(for: .seconds(1.5))
-            weatherService.refresh()
+            if !isDemoMode { weatherService.refresh() }
         }
         .onChange(of: scenePhase) { phase in
             if phase == .background && appLockEnabled {
                 isUnlocked = false
             }
-            if phase == .active {
+            if phase == .active && !isDemoMode {
                 weatherService.refresh()
             }
         }

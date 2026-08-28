@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 46">
+  <defs>
+    <linearGradient id="ribGrad" x1="0" y1="0" x2="0.6" y2="1">
+      <stop offset="0%" stop-color="#F6A8C0"/>
+      <stop offset="100%" stop-color="#DE7099"/>
+    </linearGradient>
+  </defs>
+  <!-- Left loop -->
+  <path d="M46,24 C30,6 8,10 10,24 C12,38 32,38 46,26 Z" fill="url(#ribGrad)"/>
+  <!-- Right loop -->
+  <path d="M54,24 C70,6 92,10 90,24 C88,38 68,38 54,26 Z" fill="url(#ribGrad)"/>
+  <!-- Inner shading -->
+  <path d="M42,24 C30,12 16,14 17,23 C18,31 32,31 42,25 Z" fill="white" opacity="0.18"/>
+  <path d="M58,24 C70,12 84,14 83,23 C82,31 68,31 58,25 Z" fill="white" opacity="0.18"/>
+  <!-- Tails -->
+  <path d="M46,28 L38,44 L48,40 Z" fill="#D0628C"/>
+  <path d="M54,28 L62,44 L52,40 Z" fill="#D0628C"/>
+  <!-- Knot -->
+  <ellipse cx="50" cy="25" rx="7" ry="8" fill="#E88AAC"/>
+  <ellipse cx="48" cy="22" rx="2.6" ry="3" fill="white" opacity="0.35"/>
+</svg>

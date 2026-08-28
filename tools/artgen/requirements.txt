@@ -1,0 +1,13 @@
+# 通用本地美术生成管线依赖（Apple Silicon / MPS）
+# 模型：FLUX.1-schnell (Apache-2.0, 可商用)；建议装进共享 venv ~/.venvs/artgen
+torch>=2.2
+torchvision
+diffusers>=0.31
+transformers>=4.44
+accelerate
+safetensors
+sentencepiece
+protobuf
+pillow
+rembg
+onnxruntime

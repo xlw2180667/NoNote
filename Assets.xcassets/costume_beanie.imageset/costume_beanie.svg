@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 78">
+  <defs>
+    <linearGradient id="beanieGrad" x1="0.3" y1="0" x2="0.8" y2="1">
+      <stop offset="0%" stop-color="#7FA8D9"/>
+      <stop offset="100%" stop-color="#4F7CB5"/>
+    </linearGradient>
+    <radialGradient id="beaniePom" cx="0.4" cy="0.35">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#E4EBF3"/>
+    </radialGradient>
+  </defs>
+  <!-- Pompom -->
+  <circle cx="50" cy="12" r="11" fill="url(#beaniePom)"/>
+  <circle cx="46" cy="8" r="4" fill="white" opacity="0.35"/>
+  <!-- Cap body -->
+  <path d="M18,58 Q18,22 50,22 Q82,22 82,58 Z" fill="url(#beanieGrad)"/>
+  <!-- Knit ribs -->
+  <path d="M32,56 Q31,34 40,25" stroke="#3F6BA0" stroke-width="2" fill="none" opacity="0.35"/>
+  <path d="M50,57 L50,23" stroke="#3F6BA0" stroke-width="2" fill="none" opacity="0.3"/>
+  <path d="M68,56 Q69,34 60,25" stroke="#3F6BA0" stroke-width="2" fill="none" opacity="0.35"/>
+  <!-- Folded brim -->
+  <path d="M13,54 Q50,46 87,54 Q90,64 87,72 Q50,64 13,72 Q10,64 13,54 Z" fill="#9CC0E8"/>
+  <path d="M13,57 Q50,49 87,57" stroke="white" stroke-width="2" fill="none" opacity="0.4"/>
+  <path d="M22,60 L22,70 M36,62 L36,72 M50,63 L50,73 M64,62 L64,72 M78,60 L78,70"
+        stroke="#7FA8D9" stroke-width="2.2" opacity="0.45" stroke-linecap="round"/>
+</svg>

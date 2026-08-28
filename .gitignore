@@ -1,2 +1,6 @@
 .DS_Store
 AppStoreScreenshots/
+build/
+_contactsheet.png
+__pycache__/
+*.pyc

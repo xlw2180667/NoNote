@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 62">
+  <defs>
+    <linearGradient id="brimGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F3D89A"/>
+      <stop offset="100%" stop-color="#D9B061"/>
+    </linearGradient>
+    <linearGradient id="crownGrad" x1="0.3" y1="0" x2="0.8" y2="1">
+      <stop offset="0%" stop-color="#F7E2AE"/>
+      <stop offset="100%" stop-color="#E0BC72"/>
+    </linearGradient>
+  </defs>
+  <!-- Brim -->
+  <ellipse cx="50" cy="46" rx="46" ry="14" fill="url(#brimGrad)"/>
+  <ellipse cx="50" cy="44" rx="46" ry="13" fill="#FAE6BA" opacity="0.45"/>
+  <!-- Crown -->
+  <path d="M28,46 Q28,16 50,16 Q72,16 72,46 Z" fill="url(#crownGrad)"/>
+  <!-- Straw weave lines -->
+  <path d="M30,38 Q50,33 70,38" stroke="#C79E52" stroke-width="1.4" fill="none" opacity="0.55"/>
+  <path d="M29,30 Q50,25 71,30" stroke="#C79E52" stroke-width="1.2" fill="none" opacity="0.45"/>
+  <path d="M32,23 Q50,19 68,23" stroke="#C79E52" stroke-width="1" fill="none" opacity="0.35"/>
+  <!-- Ribbon band -->
+  <path d="M27,44 Q50,38 73,44 L73,50 Q50,44 27,50 Z" fill="#7FC4E0"/>
+  <path d="M27,45 Q50,39 73,45 L73,47 Q50,41 27,47 Z" fill="white" opacity="0.25"/>
+  <!-- Ribbon knot -->
+  <path d="M66,42 L76,38 L76,50 L66,47 Z" fill="#6AB2D0"/>
+</svg>

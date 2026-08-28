@@ -217,33 +217,12 @@ struct FlockSheepView: View {
 
     @ViewBuilder
     private var costumeOverlay: some View {
-        switch definition.costume {
-        case .scarf:
-            Image("costume_scarf")
+        if let placement = definition.costume.placement {
+            Image(placement.asset)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .frame(width: size * 0.50)
-                .offset(y: size * 0.38)
-        case .sunglasses:
-            Image("costume_sunglasses")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: size * 0.48)
-                .offset(y: size * 0.01)
-        case .bowtie:
-            Image("costume_bowtie")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: size * 0.35)
-                .offset(y: size * 0.30)
-        case .santaHat:
-            Image("costume_santahat")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: size * 0.42)
-                .offset(x: size * 0.02, y: -size * 0.30)
-        case .none:
-            EmptyView()
+                .frame(width: size * placement.widthFactor)
+                .offset(x: size * placement.x, y: size * placement.y)
         }
     }
 }

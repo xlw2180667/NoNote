@@ -42,16 +42,27 @@ struct FlockBannerView: View {
                 let grassWidth = w + 2 * totalScroll * parallax + 40
 
                 ZStack(alignment: .bottom) {
-                    // Fixed sky
-                    LinearGradient(colors: skyColors, startPoint: .top, endPoint: .bottom)
-                    cloudGroup(at: CGPoint(x: -w * 0.2, y: -20))
-                    cloudGroup(at: CGPoint(x: w * 0.15, y: -15))
+                    if let art = PastureSeason.current(isPro: storeService.isPro)?.assetName {
+                        // Pro: one painted panorama, panned by the same parallax as the hills
+                        Image(art)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: grassWidth)
+                            .offset(x: sheepScrollOffset * parallax)
+                            .frame(width: w)
+                            .clipped()
+                    } else {
+                        // Fixed sky
+                        LinearGradient(colors: skyColors, startPoint: .top, endPoint: .bottom)
+                        cloudGroup(at: CGPoint(x: -w * 0.2, y: -20))
+                        cloudGroup(at: CGPoint(x: w * 0.15, y: -15))
 
-                    // Grass with parallax
-                    // .frame(width: w) prevents grass from inflating ZStack layout
-                    grassHills(width: grassWidth)
-                        .offset(x: sheepScrollOffset * parallax)
-                        .frame(width: w)
+                        // Grass with parallax
+                        // .frame(width: w) prevents grass from inflating ZStack layout
+                        grassHills(width: grassWidth)
+                            .offset(x: sheepScrollOffset * parallax)
+                            .frame(width: w)
+                    }
 
                     if state.sheep.isEmpty {
                         VStack(spacing: 6) {
