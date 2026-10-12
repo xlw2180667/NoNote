@@ -1,5 +1,6 @@
 import SwiftUI
 import LocalAuthentication
+import UsageKit
 
 struct SecuritySettingsView: View {
     @AppStorage("appLockEnabled") private var appLockEnabled = false
@@ -32,12 +33,15 @@ struct SecuritySettingsView: View {
         .onAppear {
             toggleValue = appLockEnabled
         }
+        .usageScreen(DiaryScreen.security)
     }
 
     private func enableLock() {
+        UsageStats.shared.recordStarted(DiaryFlow.lockSetup)
         Task {
             let success = await BiometricAuthService.authenticate()
             if success {
+                UsageStats.shared.recordCompleted(DiaryFlow.lockSetup)
                 appLockEnabled = true
             } else {
                 toggleValue = false

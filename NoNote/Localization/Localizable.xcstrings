@@ -4675,6 +4675,88 @@
         }
       }
     },
+    "#shareUsageStats" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share Usage Statistics"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compartir estadísticas de uso"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "利用状況の統計を共有"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "사용 통계 공유"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "共享使用统计"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "分享使用統計"
+          }
+        }
+      }
+    },
+    "#shareUsageStatsFooter" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sends anonymous counts of which features are used. Never anything you write, no personal data. Turning this off deletes counts not yet sent."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envía recuentos anónimos de qué funciones se usan. Nunca nada de lo que escribes ni datos personales. Al desactivarlo se borran los recuentos aún no enviados."
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "どの機能が使われたかの回数だけを匿名で送信します。書いた内容や個人情報は一切含みません。オフにすると未送信の集計は削除されます。"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "어떤 기능을 사용했는지 횟수만 익명으로 보냅니다. 작성한 내용이나 개인 정보는 절대 포함되지 않습니다. 끄면 아직 보내지 않은 통계가 삭제됩니다."
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "匿名发送各功能的使用次数。绝不包含你写的任何内容，也没有个人信息。关闭后会删除尚未发送的统计。"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "匿名傳送各功能的使用次數。絕不包含你寫的任何內容，也沒有個人資料。關閉後會刪除尚未傳送的統計。"
+          }
+        }
+      }
+    },
     "#sheepAllAwake" : {
       "extractionState" : "manual",
       "localizations" : {

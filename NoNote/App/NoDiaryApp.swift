@@ -1,4 +1,5 @@
 import SwiftUI
+import UsageKit
 
 @main
 struct NoDiaryApp: App {
@@ -59,6 +60,15 @@ struct RootView: View {
             }
             if phase == .active && !isDemoMode {
                 weatherService.refresh()
+            }
+        }
+        // Anonymous usage counts. `initial: true` so the cold launch counts as an open.
+        // hasExistingData reads the on-disk diary cache (loaded in CloudKitService.init),
+        // and isPro is the persisted entitlement, so both are right before any fetch.
+        .onChange(of: scenePhase, initial: true) { _, phase in
+            if phase == .active && !isDemoMode {
+                UsageStats.shared.appDidBecomeActive(isPro: storeService.isPro,
+                                                     hasExistingData: !cloudKit.diaryCache.isEmpty)
             }
         }
     }

@@ -1,4 +1,5 @@
 import SwiftUI
+import UsageKit
 
 /// Jump straight to a month instead of stepping through them one at a time.
 ///
@@ -119,5 +120,6 @@ struct MonthPickerView: View {
         .presentationDetents([.height(320)])
         .background(Color.surface.ignoresSafeArea())
         .task(id: year) { await cloudKit.prefetchYear(year) }
+        .usageScreen(DiaryScreen.monthPicker)
     }
 }

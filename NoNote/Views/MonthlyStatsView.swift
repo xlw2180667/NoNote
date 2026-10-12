@@ -1,4 +1,5 @@
 import SwiftUI
+import UsageKit
 
 struct MonthlyStatsView: View {
     let diaryDates: Set<String>
@@ -76,6 +77,7 @@ struct MonthlyStatsView: View {
                 }
             }
         }
+        .usageScreen(DiaryScreen.stats)
     }
 
     private func statCard(title: String, value: String, icon: String) -> some View {

@@ -1,5 +1,6 @@
 import SwiftUI
 import SheepCalendar
+import UsageKit
 
 struct CalendarView: View {
     @ObservedObject var cloudKit: CloudKitService
@@ -64,6 +65,7 @@ struct CalendarView: View {
             #endif
             await fetchCurrentMonth()
         }
+        .usageScreen(DiaryScreen.calendar)
         .onChange(of: displayedMonth) { _ in
             Task { await fetchDisplayedMonth() }
         }
@@ -413,6 +415,8 @@ struct CalendarView: View {
         do {
             try await cloudKit.fetchDiaries(monthAndYear: monthAndYear)
         } catch {
+            // Counted even when the alert is muted: the month's sheep are missing either way.
+            UsageStats.shared.recordFailure(DiaryFailure.icloudFetch)
             if !UserDefaults.standard.bool(forKey: "dontShowAlert") {
                 errorMessage = String(localized: "#cannotConnectToICloud")
                 showError = true

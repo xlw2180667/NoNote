@@ -2,6 +2,7 @@ import SwiftUI
 import PhotosUI
 import StoreKit
 import UniformTypeIdentifiers
+import UsageKit
 
 // MARK: - Photo Item
 
@@ -65,6 +66,9 @@ struct DiaryEditorView: View {
     // Multi-photo state
     @State private var selectedPhotoItems: [PhotosPickerItem] = []
     @State private var photoItems: [PhotoItem] = []
+    @State private var countedPhotoIDs: Set<UUID> = []
+    /// StoreService's persisted entitlement; only read to tell a free user hitting the flock cap.
+    @AppStorage("isPro") private var isPro = false
     @State private var draggingItem: PhotoItem? = nil
     @State private var fullScreenPhoto: FullScreenPhoto? = nil
     @State private var isLoadingPhotos = false
@@ -274,6 +278,7 @@ struct DiaryEditorView: View {
                 initialIndex: photo.index
             )
         }
+        .usageScreen(DiaryScreen.editor)
     }
 
     // MARK: - Photo Section
@@ -365,8 +370,25 @@ struct DiaryEditorView: View {
     private func performSave() {
         guard hasContent else { return }
         isLoading = true
+        let isNewEntry = cloudKit.diaryCacheEntry(for: date) == nil
+        let lockedSheepBefore = isNewEntry && !isPro
+            ? FlockService.computeFlockState(diaryDates: cloudKit.diaryDates).ghostSheep.count : 0
+        if isNewEntry {
+            UsageStats.shared.record(DiaryUsageEvent.entryCreated)
+        }
+        // New photos stay unsaved-looking until reload, so a later save would recount them.
+        let newPhotoIDs = Set(photoItems.filter { $0.fullImage != nil }.map(\.id))
+        if !isLoadingPhotos, !newPhotoIDs.isSubset(of: countedPhotoIDs) {
+            UsageStats.shared.record(DiaryUsageEvent.photoAdded)
+            countedPhotoIDs.formUnion(newPhotoIDs)
+        }
         // Update text + mood + weather in memory
         cloudKit.updateCacheInMemory(text: text, date: date, mood: mood, weather: weather)
+        // This save earned a sheep past the free flock's five
+        if isNewEntry && !isPro,
+           FlockService.computeFlockState(diaryDates: cloudKit.diaryDates).ghostSheep.count > lockedSheepBefore {
+            UsageStats.shared.record(DiaryUsageEvent.limitHitFlock)
+        }
         // Update original state so hasChanges resets
         originalText = text
         originalMood = mood

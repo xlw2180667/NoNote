@@ -1,4 +1,5 @@
 import SwiftUI
+import UsageKit
 
 private struct ScrollOffsetKey: PreferenceKey {
     static var defaultValue: CGFloat = 0
@@ -83,6 +84,7 @@ struct FlockDetailView: View {
             }
             .animation(.spring(response: 0.3, dampingFraction: 0.8), value: zoomedSheep?.id)
         }
+        .usageScreen(DiaryScreen.flock)
     }
 
     // MARK: - Share Card
@@ -152,6 +154,7 @@ struct FlockDetailView: View {
                         .foregroundColor(.textSecondary)
                         .multilineTextAlignment(.center)
                     Button {
+                        UsageStats.shared.recordPaywall(DiaryPaywallSource.wardrobe)
                         Task {
                             do {
                                 try await storeService.purchase()
@@ -207,8 +210,12 @@ struct FlockDetailView: View {
             withAnimation(.easeInOut(duration: 0.15)) {
                 previewCostume = costume
             }
+            if !storeService.isPro && costume != zoomedSheep?.costume {
+                UsageStats.shared.record(DiaryUsageEvent.lockedCostume)
+            }
             if storeService.isPro {
                 FlockService.saveCostume(costume, for: sheepId)
+                UsageStats.shared.record(DiaryUsageEvent.costumeChanged)
                 // Update zoomedSheep so the overlay reflects saved costume
                 if var updated = zoomedSheep {
                     updated.costume = costume
@@ -510,6 +517,7 @@ struct FlockDetailView: View {
             }
 
             Button {
+                UsageStats.shared.recordPaywall(DiaryPaywallSource.flockCard)
                 Task {
                     do {
                         try await storeService.purchase()

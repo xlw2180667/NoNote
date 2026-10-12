@@ -1,5 +1,5 @@
 {
-  "originHash" : "ecf6b92dd3fe56ee6eff41909206d16b9dbe686ba3c93a061184f1239633e4cb",
+  "originHash" : "08696454a9bbf3af3b845df5cbd50f0e2c4275303b98966daf2ff5e20af4d3c6",
   "pins" : [
     {
       "identity" : "sheepcalendar",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "baaee77a59fd24216dd3ed508772b167b0b6bcc1",
         "version" : "0.1.1"
+      }
+    },
+    {
+      "identity" : "usagekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/xlw2180667/UsageKit.git",
+      "state" : {
+        "revision" : "2322445b7b506e74f2bc1a0a6ce685f2ba4ca741",
+        "version" : "0.2.0"
       }
     }
   ],

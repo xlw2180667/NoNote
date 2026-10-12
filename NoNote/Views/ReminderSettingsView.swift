@@ -1,4 +1,5 @@
 import SwiftUI
+import UsageKit
 
 struct ReminderSettingsView: View {
     @AppStorage("reminderEnabled") private var reminderEnabled = false
@@ -56,6 +57,7 @@ struct ReminderSettingsView: View {
         } message: {
             Text(String(localized: "#notificationPermissionDenied"))
         }
+        .usageScreen(DiaryScreen.reminder)
     }
 
     private func enableReminder() {
@@ -64,6 +66,7 @@ struct ReminderSettingsView: View {
             if granted {
                 NotificationService.scheduleDaily(hour: reminderHour, minute: reminderMinute)
             } else {
+                UsageStats.shared.recordFailure(DiaryFailure.reminderPermission)
                 showPermissionDenied = true
             }
         }

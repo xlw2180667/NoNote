@@ -1,4 +1,5 @@
 import SwiftUI
+import UsageKit
 
 struct LockScreenView: View {
     var onUnlocked: () -> Void
@@ -39,12 +40,15 @@ struct LockScreenView: View {
             #endif
             authenticate()
         }
+        .usageScreen(DiaryScreen.lockScreen)
     }
 
     private func authenticate() {
         Task {
             if await BiometricAuthService.authenticate() {
                 await MainActor.run { onUnlocked() }
+            } else {
+                UsageStats.shared.recordFailure(DiaryFailure.unlock)
             }
         }
     }

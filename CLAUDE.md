@@ -5,7 +5,7 @@ Minimalist diary app with iCloud sync. Write one diary entry per day, tracked on
 ## Tech Stack
 
 - **Language**: Swift 5, SwiftUI
-- **Target**: iOS 16+, iPhone & iPad
+- **Target**: iOS 17+, iPhone & iPad (raised from 16 in 2026-10 for UsageKit, which needs iOS 17)
 - **Backend**: CloudKit (private database)
 - **Package Manager**: Swift Package Manager
 - **Dependencies**: [SheepCalendar](https://github.com/xlw2180667/SheepCalendar) (local package at `../SheepCalendar`)

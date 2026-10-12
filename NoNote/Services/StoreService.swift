@@ -1,5 +1,6 @@
 import StoreKit
 import SwiftUI
+import UsageKit
 
 enum StoreError: LocalizedError {
     case productNotFound
@@ -45,9 +46,19 @@ final class StoreService: ObservableObject {
             }
         }
         isPro = entitled
+        if entitled { UsageStats.shared.updatePro(true) }
     }
 
     func purchase() async throws {
+        do {
+            try await performPurchase()
+        } catch {
+            UsageStats.shared.recordFailure(DiaryFailure.purchase)
+            throw error
+        }
+    }
+
+    private func performPurchase() async throws {
         let products = try await Product.products(for: [Self.productID])
         guard let product = products.first else {
             throw StoreError.productNotFound
@@ -57,9 +68,15 @@ final class StoreService: ObservableObject {
         case .success(let verification):
             if case .verified(let tx) = verification {
                 isPro = true
+                UsageStats.shared.updatePro(true)
+                UsageStats.shared.record(CoreUsageEvent.purchaseCompleted)
                 await tx.finish()
+            } else {
+                UsageStats.shared.recordFailure(DiaryFailure.purchase)
             }
-        case .userCancelled, .pending:
+        case .userCancelled:
+            UsageStats.shared.record(DiaryUsageEvent.paywallClosed)
+        case .pending:
             break
         @unknown default:
             break
@@ -67,7 +84,13 @@ final class StoreService: ObservableObject {
     }
 
     func restore() async {
-        try? await AppStore.sync()
+        do {
+            try await AppStore.sync()
+        } catch StoreKitError.userCancelled {
+            // Dismissed the Apple ID prompt — not a failure.
+        } catch {
+            UsageStats.shared.recordFailure(DiaryFailure.restore)
+        }
         await checkEntitlements()
     }
 
@@ -78,6 +101,7 @@ final class StoreService: ObservableObject {
                     let isActive = tx.productID == StoreService.productID && tx.revocationDate == nil
                     await MainActor.run { [weak self] in
                         self?.isPro = isActive
+                        if isActive { UsageStats.shared.updatePro(true) }
                     }
                     await tx.finish()
                 }

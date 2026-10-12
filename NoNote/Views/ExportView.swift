@@ -1,4 +1,5 @@
 import SwiftUI
+import UsageKit
 
 struct ExportView: View {
     @ObservedObject var cloudKit: CloudKitService
@@ -52,7 +53,9 @@ struct ExportView: View {
             }
             .sheet(isPresented: $showShareSheet) {
                 if let url = exportURL {
-                    ShareSheet(items: [url])
+                    ShareSheet(items: [url]) { completed in
+                        if completed { UsageStats.shared.recordCompleted(DiaryFlow.export) }
+                    }
                 }
             }
             .alert(String(localized: "#oops"), isPresented: $showNoEntries) {
@@ -61,6 +64,7 @@ struct ExportView: View {
                 Text(String(localized: "#noEntriesToExport"))
             }
         }
+        .usageScreen(DiaryScreen.export)
     }
 
     private func exportDiaries() {
@@ -69,6 +73,7 @@ struct ExportView: View {
             showNoEntries = true
             return
         }
+        UsageStats.shared.recordStarted(DiaryFlow.export)
 
         let url: URL?
         if exportFormat == 0 {
@@ -80,6 +85,8 @@ struct ExportView: View {
         if let url = url {
             exportURL = url
             showShareSheet = true
+        } else {
+            UsageStats.shared.recordFailure(DiaryFailure.export)
         }
     }
 }
@@ -87,9 +94,13 @@ struct ExportView: View {
 // UIKit share sheet wrapper
 struct ShareSheet: UIViewControllerRepresentable {
     let items: [Any]
+    /// Called when the sheet closes; `true` if the user actually saved or sent the file.
+    var onFinish: ((Bool) -> Void)? = nil
 
     func makeUIViewController(context: Context) -> UIActivityViewController {
-        UIActivityViewController(activityItems: items, applicationActivities: nil)
+        let controller = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        controller.completionWithItemsHandler = { _, completed, _, _ in onFinish?(completed) }
+        return controller
     }
 
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}

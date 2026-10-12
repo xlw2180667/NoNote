@@ -1,4 +1,5 @@
 import SwiftUI
+import UsageKit
 
 struct SearchView: View {
     @ObservedObject var cloudKit: CloudKitService
@@ -108,6 +109,7 @@ struct SearchView: View {
                 cloudResults = []
             }
         }
+        .usageScreen(DiaryScreen.search)
     }
 
     private func searchCloud() {

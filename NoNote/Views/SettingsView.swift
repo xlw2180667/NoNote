@@ -1,4 +1,5 @@
 import SwiftUI
+import UsageKit
 
 struct SettingsView: View {
     @ObservedObject var cloudKit: CloudKitService
@@ -59,6 +60,7 @@ struct SettingsView: View {
                     .foregroundColor(.accent)
             } else {
                 Button {
+                    UsageStats.shared.recordPaywall(DiaryPaywallSource.settings)
                     Task { try? await storeService.purchase() }
                 } label: {
                     Label(String(localized: "#unlockFullFlock"), systemImage: "sparkles")
@@ -93,6 +95,19 @@ struct SettingsView: View {
                 Label(String(localized: "#privacyPolicy"), systemImage: "hand.raised")
                     .font(.custom(AppFonts.regular, size: 16))
                     .foregroundColor(.textPrimary)
+            }
+
+            Section {
+                Toggle(isOn: Binding(get: { !UsageStats.shared.isOptedOut },
+                                     set: { UsageStats.shared.setOptedOut(!$0) })) {
+                    Label(String(localized: "#shareUsageStats"), systemImage: "chart.bar")
+                        .font(.custom(AppFonts.regular, size: 16))
+                        .foregroundColor(.textPrimary)
+                }
+                .tint(.accent)
+            } footer: {
+                Text(String(localized: "#shareUsageStatsFooter"))
+                    .font(.custom(AppFonts.regular, size: 12))
             }
 
             #if DEBUG
@@ -153,5 +168,6 @@ struct SettingsView: View {
         .background(Color.surface)
         .navigationTitle(String(localized: "#settings"))
         .navigationBarTitleDisplayMode(.inline)
+        .usageScreen(DiaryScreen.settings)
     }
 }

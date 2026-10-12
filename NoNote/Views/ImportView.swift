@@ -1,5 +1,6 @@
 import SwiftUI
 import UniformTypeIdentifiers
+import UsageKit
 
 /// Bring a diary over from another app: pick a source, see an honest preview, then confirm.
 ///
@@ -80,6 +81,7 @@ struct ImportView: View {
         } message: {
             Text(errorMessage ?? "")
         }
+        .usageScreen(DiaryScreen.`import`)
     }
 
     // MARK: - Pick a source
@@ -90,6 +92,7 @@ struct ImportView: View {
                 ForEach(DiaryImportService.Source.allCases) { option in
                     Button {
                         source = option
+                        UsageStats.shared.recordStarted(DiaryFlow.import)
                         showPicker = true
                     } label: {
                         VStack(alignment: .leading, spacing: 3) {
@@ -248,12 +251,14 @@ struct ImportView: View {
     private func handlePick(_ result: Result<[URL], Error>) {
         switch result {
         case .failure(let error):
+            UsageStats.shared.recordFailure(DiaryFailure.importRead)
             errorMessage = error.localizedDescription
         case .success(let urls):
             guard let url = urls.first else { return }
             do {
                 preview = try DiaryImportService.parse(url: url, as: source)
             } catch {
+                UsageStats.shared.recordFailure(DiaryFailure.importRead)
                 errorMessage = error.localizedDescription
             }
         }
@@ -267,6 +272,12 @@ struct ImportView: View {
                 Task { @MainActor in progress = (done, total) }
             }
             await MainActor.run {
+                if result.imported > 0 {
+                    UsageStats.shared.recordCompleted(DiaryFlow.import)
+                }
+                if result.failedUpload > 0 {
+                    UsageStats.shared.recordFailure(DiaryFailure.importUpload)
+                }
                 isImporting = false
                 summary = result
             }

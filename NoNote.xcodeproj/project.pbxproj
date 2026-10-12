@@ -58,6 +58,8 @@
 		B1000000000000000000002E /* CostumeGalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000002E /* CostumeGalleryView.swift */; };
 		B1000000000000000000002F /* SyncedSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000002F /* SyncedSettings.swift */; };
 		B10000000000000000000030 /* MonthPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000030 /* MonthPickerView.swift */; };
+		B10000000000000000000031 /* UsageEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000031 /* UsageEvents.swift */; };
+		D10000000000000000000003 /* UsageKit in Frameworks */ = {isa = PBXBuildFile; productRef = D10000000000000000000002 /* UsageKit */; };
 		B1000000000000000000002A /* FlockShareCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000002A /* FlockShareCardView.swift */; };
 		DC09999B2F634FA600FE7A6F /* SheepCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = DC09999A2F634FA600FE7A6F /* SheepCalendar */; };
 		DC0999A32F6409B800FE7A6F /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC0999A22F6409B700FE7A6F /* WidgetKit.framework */; };
@@ -146,6 +148,7 @@
 		A1000000000000000000002E /* CostumeGalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CostumeGalleryView.swift; sourceTree = "<group>"; };
 		A1000000000000000000002F /* SyncedSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncedSettings.swift; sourceTree = "<group>"; };
 		A10000000000000000000030 /* MonthPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MonthPickerView.swift; sourceTree = "<group>"; };
+		A10000000000000000000031 /* UsageEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageEvents.swift; sourceTree = "<group>"; };
 		A1000000000000000000002A /* FlockShareCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlockShareCardView.swift; sourceTree = "<group>"; };
 		DC0999A12F6409B700FE7A6F /* NoDiaryWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NoDiaryWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		DC0999A22F6409B700FE7A6F /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -176,6 +179,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DC09999B2F634FA600FE7A6F /* SheepCalendar in Frameworks */,
+				D10000000000000000000003 /* UsageKit in Frameworks */,
 				6EC6670A20FABD6A00827A26 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -289,6 +293,7 @@
 				A1000000000000000000002B /* AppLanguage.swift */,
 				A1000000000000000000002C /* DiaryImportService.swift */,
 				A1000000000000000000002F /* SyncedSettings.swift */,
+				A10000000000000000000031 /* UsageEvents.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -367,6 +372,9 @@
 				DC0999B52F6409B800FE7A6F /* PBXTargetDependency */,
 			);
 			name = NoDiary;
+			packageProductDependencies = (
+				D10000000000000000000002 /* UsageKit */,
+			);
 			productName = NoNote;
 			productReference = 6E535DDB20FA854C00996470 /* NoDiary.app */;
 			productType = "com.apple.product-type.application";
@@ -435,6 +443,7 @@
 			mainGroup = 6E535DD220FA854C00996470;
 			packageReferences = (
 				DC0999992F634FA600FE7A6F /* XCRemoteSwiftPackageReference "SheepCalendar" */,
+				D10000000000000000000001 /* XCRemoteSwiftPackageReference "UsageKit" */,
 			);
 			productRefGroup = 6E535DDC20FA854C00996470 /* Products */;
 			projectDirPath = "";
@@ -518,6 +527,7 @@
 				B10000000000000000000026 /* WeatherService.swift in Sources */,
 				B10000000000000000000027 /* WeatherPickerRow.swift in Sources */,
 				B10000000000000000000028 /* StoreService.swift in Sources */,
+				B10000000000000000000031 /* UsageEvents.swift in Sources */,
 				B10000000000000000000008 /* AppColors.swift in Sources */,
 				B10000000000000000000009 /* AppFonts.swift in Sources */,
 			);
@@ -594,7 +604,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -649,7 +659,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -820,6 +830,14 @@
 				minimumVersion = 0.1.1;
 			};
 		};
+		D10000000000000000000001 /* XCRemoteSwiftPackageReference "UsageKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/xlw2180667/UsageKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.2.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -827,6 +845,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = DC0999992F634FA600FE7A6F /* XCRemoteSwiftPackageReference "SheepCalendar" */;
 			productName = SheepCalendar;
+		};
+		D10000000000000000000002 /* UsageKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D10000000000000000000001 /* XCRemoteSwiftPackageReference "UsageKit" */;
+			productName = UsageKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
