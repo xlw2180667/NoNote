@@ -61,7 +61,7 @@ struct SettingsView: View {
             } else {
                 Button {
                     UsageStats.shared.recordPaywall(DiaryPaywallSource.settings)
-                    Task { try? await storeService.purchase() }
+                    Task { try? await storeService.purchase(source: .settings) }
                 } label: {
                     Label(String(localized: "#unlockFullFlock"), systemImage: "sparkles")
                         .font(.custom(AppFonts.regular, size: 16))

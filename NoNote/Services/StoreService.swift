@@ -49,16 +49,18 @@ final class StoreService: ObservableObject {
         if entitled { UsageStats.shared.updatePro(true) }
     }
 
-    func purchase() async throws {
+    /// - Parameter source: the paywall entry whose unlock button started this purchase;
+    ///   `nil` when unknown. Attached to the purchase count, not inferred later.
+    func purchase(source: DiaryPaywallSource?) async throws {
         do {
-            try await performPurchase()
+            try await performPurchase(source: source)
         } catch {
             UsageStats.shared.recordFailure(DiaryFailure.purchase)
             throw error
         }
     }
 
-    private func performPurchase() async throws {
+    private func performPurchase(source: DiaryPaywallSource?) async throws {
         let products = try await Product.products(for: [Self.productID])
         guard let product = products.first else {
             throw StoreError.productNotFound
@@ -69,7 +71,8 @@ final class StoreService: ObservableObject {
             if case .verified(let tx) = verification {
                 isPro = true
                 UsageStats.shared.updatePro(true)
-                UsageStats.shared.record(CoreUsageEvent.purchaseCompleted)
+                // Pro is a one-time permanent unlock, hence .lifetime.
+                UsageStats.shared.recordPurchase(plan: .lifetime, source: source)
                 await tx.finish()
             } else {
                 UsageStats.shared.recordFailure(DiaryFailure.purchase)

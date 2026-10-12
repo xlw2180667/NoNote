@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/xlw2180667/UsageKit.git",
       "state" : {
-        "revision" : "2322445b7b506e74f2bc1a0a6ce685f2ba4ca741",
-        "version" : "0.2.0"
+        "revision" : "e350f60c904a6aa625931d73abe6099eed517820",
+        "version" : "0.3.0"
       }
     }
   ],

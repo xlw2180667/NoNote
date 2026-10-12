@@ -157,7 +157,7 @@ struct FlockDetailView: View {
                         UsageStats.shared.recordPaywall(DiaryPaywallSource.wardrobe)
                         Task {
                             do {
-                                try await storeService.purchase()
+                                try await storeService.purchase(source: .wardrobe)
                             } catch {
                                 purchaseError = error.localizedDescription
                             }
@@ -520,7 +520,7 @@ struct FlockDetailView: View {
                 UsageStats.shared.recordPaywall(DiaryPaywallSource.flockCard)
                 Task {
                     do {
-                        try await storeService.purchase()
+                        try await storeService.purchase(source: .flockCard)
                     } catch {
                         purchaseError = error.localizedDescription
                     }
