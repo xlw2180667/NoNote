@@ -19,7 +19,7 @@ struct MoodPickerRow: View {
                         }
                     }) {
                         VStack(spacing: 4) {
-                            SheepMoodIcon(mood: mood.id, size: 36)
+                            DressedMoodSheep(mood: mood.id, size: 36)
                             Text(String(localized: String.LocalizationValue(mood.labelKey)))
                                 .font(.custom(AppFonts.regular, size: 11))
                                 .foregroundColor(selectedMood == mood.id ? .accent : .textSecondary)

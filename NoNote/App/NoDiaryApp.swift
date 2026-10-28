@@ -14,7 +14,6 @@ struct RootView: View {
     @StateObject private var cloudKit = CloudKitService()
     @StateObject private var storeService = StoreService()
     @StateObject private var weatherService = WeatherService.shared
-    @Environment(\.horizontalSizeClass) private var hSizeClass
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage("appLockEnabled") private var appLockEnabled = false
     @State private var isUnlocked = false
@@ -35,12 +34,11 @@ struct RootView: View {
         Group {
             if appLockEnabled && !isUnlocked {
                 LockScreenView { isUnlocked = true }
-            } else if hSizeClass == .regular {
-                CalendarView(cloudKit: cloudKit, storeService: storeService)
             } else {
-                NavigationStack {
-                    CalendarView(cloudKit: cloudKit, storeService: storeService)
-                }
+                // One CalendarView for both size classes: it picks its own layout, and keeping it
+                // in one place means a size-class change (iPhone Duo folding, iPad multitasking)
+                // keeps the selected day and month instead of rebuilding the view from scratch.
+                CalendarView(cloudKit: cloudKit, storeService: storeService)
             }
         }
         .task {

@@ -42,6 +42,14 @@ struct SettingsView: View {
                     .foregroundColor(.textPrimary)
             }
 
+            NavigationLink {
+                AppearanceView(storeService: storeService)
+            } label: {
+                Label(String(localized: "#dressUp"), systemImage: "tshirt")
+                    .font(.custom(AppFonts.regular, size: 16))
+                    .foregroundColor(.textPrimary)
+            }
+
             if storeService.isPro {
                 Picker(selection: Binding(get: { synced.pastureSeason },
                                           set: { synced.pastureSeason = $0 })) {
@@ -63,7 +71,7 @@ struct SettingsView: View {
                     UsageStats.shared.recordPaywall(DiaryPaywallSource.settings)
                     Task { try? await storeService.purchase(source: .settings) }
                 } label: {
-                    Label(String(localized: "#unlockFullFlock"), systemImage: "sparkles")
+                    Label(String(localized: "#unlockPro"), systemImage: "sparkles")
                         .font(.custom(AppFonts.regular, size: 16))
                         .foregroundColor(.accent)
                 }

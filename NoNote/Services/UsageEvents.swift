@@ -1,3 +1,5 @@
+import CloudKit
+import LocalAuthentication
 import UsageKit
 
 /// Feature events counted by UsageKit (anonymous per-day counts, see the package README).
@@ -10,10 +12,22 @@ enum DiaryUsageEvent: String, UsageEventName {
     case photoAdded = "photo_added"
     /// A Pro user dressed a sheep.
     case costumeChanged = "costume_changed"
+    /// A Pro user dressed the mood sheep (calendar, preview card, mood picker).
+    case moodSheepChanged = "mood_sheep_changed"
+    /// A Pro user switched the home-screen icon.
+    case iconChanged = "icon_changed"
+    /// A Pro user switched the editor paper.
+    case paperChanged = "paper_changed"
 
     // What free users want badly enough to pay for. Free users only.
     /// Tapped a costume — Pro-only, a free user can preview but not keep it.
     case lockedCostume = "locked_costume"
+    /// Tried a mood-sheep costume in Dress Up.
+    case lockedMoodSheep = "locked_mood_sheep"
+    /// Tried an app icon in Dress Up.
+    case lockedIcon = "locked_icon"
+    /// Tried a paper in the editor.
+    case lockedPaper = "locked_paper"
     /// A save earned a sheep beyond the free flock's five (shown greyed out).
     case limitHitFlock = "limit_hit_flock"
     /// The App Store purchase sheet was cancelled.
@@ -27,6 +41,10 @@ enum DiaryPaywallSource: String, UsagePaywallSource {
     case flockCard = "flock_card"
     /// The unlock button under the costume picker.
     case wardrobe
+    /// The Dress Up sheet (mood-sheep costume, app icon).
+    case dressUp = "dress_up"
+    /// The paper picker in the editor.
+    case paper
 }
 
 /// Screens a user deliberately goes to. Counted as `screen_<raw>` per appearance, via
@@ -49,6 +67,8 @@ enum DiaryScreen: String, UsageScreenName {
     case export
     case `import`
     case lockScreen = "lock_screen"
+    case dressUp = "dress_up"
+    case paper
 }
 
 /// Multi-step flows. `flow_started_<raw>` minus `flow_completed_<raw>` is where users give up.
@@ -78,8 +98,57 @@ enum DiaryFailure: String, UsageFailureName {
     case importUpload = "import_upload"
     /// Export produced no file.
     case export
-    /// Face ID / passcode failed or was cancelled on the lock screen.
+    /// Face ID / passcode failed on the lock screen. Cancels are not counted: through 2.3.1 every
+    /// lock taken in the background counted here, which made this look like the top failure.
     case unlock
     /// Daily reminder switched on but notification permission was denied.
     case reminderPermission = "reminder_permission"
+}
+
+/// Why a failure happened. Counted as `failed_<raw>[reason=…]` next to the plain total, so a
+/// network blip can be told apart from a bug.
+enum DiaryFailureReason: String, UsageDimension {
+    static let dimensionName = "reason"
+
+    // Unlock
+    /// Face / passcode not recognised.
+    case mismatch
+    /// Too many attempts; biometry locked until the passcode is entered.
+    case lockout
+    /// No passcode set, or biometry removed since the lock was switched on.
+    case unavailable
+
+    // iCloud
+    /// Offline, timed out, or still waiting on the mainland-China "allow network data" prompt.
+    case network
+    case noAccount = "no_account"
+    case quota
+    /// CloudKit itself unavailable or throttling.
+    case server
+
+    case other
+
+    init(authError code: LAError.Code?) {
+        switch code {
+        case .authenticationFailed: self = .mismatch
+        case .biometryLockout: self = .lockout
+        case .passcodeNotSet, .biometryNotAvailable, .biometryNotEnrolled: self = .unavailable
+        default: self = .other
+        }
+    }
+
+    init(cloudKitError error: Error) {
+        if error is URLError { self = .network; return }
+        guard let ck = error as? CKError else { self = .other; return }
+        switch ck.code {
+        case .networkUnavailable, .networkFailure: self = .network
+        case .notAuthenticated: self = .noAccount
+        case .quotaExceeded: self = .quota
+        case .serviceUnavailable, .requestRateLimited, .zoneBusy: self = .server
+        default: self = .other
+        }
+    }
+
+    /// Worth a quiet retry before telling the user.
+    var isTransient: Bool { self == .network || self == .server }
 }

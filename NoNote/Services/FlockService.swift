@@ -38,6 +38,27 @@ enum SheepCostume: String, CaseIterable {
         }
     }
 
+    /// Same art on the head-only mood sheep (`SheepMoodIcon`) — which is also the app icon's
+    /// sheep, so `tools/appicons/make_icons.py` reads this table to dress the alternate icons.
+    /// No neck below the face, so neckwear sits under the chin and hats sit on the wool.
+    var headPlacement: Placement? {
+        switch self {
+        case .none:        return nil
+        case .scarf:       return .init(asset: "costume_scarf",       widthFactor: 0.62, x: 0,     y: 0.36)
+        case .bandana:     return .init(asset: "costume_bandana",     widthFactor: 0.58, x: 0,     y: 0.34)
+        case .bowtie:      return .init(asset: "costume_bowtie",      widthFactor: 0.34, x: 0,     y: 0.30)
+        case .sunglasses:  return .init(asset: "costume_sunglasses",  widthFactor: 0.46, x: 0,     y: 0.00)
+        case .headphones:  return .init(asset: "costume_headphones",  widthFactor: 0.92, x: 0,     y: -0.14)
+        case .earmuffs:    return .init(asset: "costume_earmuffs",    widthFactor: 0.90, x: 0,     y: -0.10)
+        case .flowerCrown: return .init(asset: "costume_flowercrown", widthFactor: 0.78, x: 0,     y: -0.31)
+        case .ribbon:      return .init(asset: "costume_ribbon",      widthFactor: 0.42, x: 0.22,  y: -0.34)
+        case .strawHat:    return .init(asset: "costume_strawhat",    widthFactor: 0.92, x: 0,     y: -0.35)
+        case .beret:       return .init(asset: "costume_beret",       widthFactor: 0.68, x: 0.04,  y: -0.35)
+        case .beanie:      return .init(asset: "costume_beanie",      widthFactor: 0.72, x: 0,     y: -0.35)
+        case .santaHat:    return .init(asset: "costume_santahat",    widthFactor: 0.70, x: 0.04,  y: -0.40)
+        }
+    }
+
     var localizedNameKey: String {
         switch self {
         case .none:        return "#costumeNone"

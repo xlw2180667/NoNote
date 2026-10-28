@@ -17,20 +17,21 @@ NoNote/
 ├── App/            NoDiaryApp.swift, Info.plist
 ├── Models/         DiaryEntry.swift (CKRecord wrapper), DiaryCacheEntry.swift
 ├── Services/       CloudKitService.swift, StatsService.swift, NotificationService.swift,
-│                   ExportService.swift, PhotoCacheService.swift, SharedDataStore.swift,
+│                   ExportService.swift, PhotoCacheService.swift, SharedDataStore.swift, Appearance.swift,
 │                   FlockService.swift, AppLanguage.swift, DiaryImportService.swift
 ├── Views/          CalendarView, DiaryEditorView, DiaryPreviewCard, ImportView,
 │                   CostumeGalleryView (DEBUG QA),
 │                   EmptyStateView, StreakBadgeView, LoadingOverlay,
 │                   SettingsView, SearchView, MoodPickerRow,
 │                   MonthlyStatsView, ReminderSettingsView, ExportView,
-│                   FlockBannerView, FlockDetailView, FlockSheepView
+│                   FlockBannerView, FlockDetailView, FlockSheepView, AppearanceView, PaperPickerView
 ├── Theme/          AppColors.swift (adaptive light/dark), AppFonts.swift (Roboto)
 ├── Localization/   Localizable.xcstrings (en, zh-Hans, zh-Hant, ja, ko, es)
 └── Resource/       Roboto-Bold/Medium/Regular.ttf
 
 tools/
 ├── artgen/         generate.py, artgen.json  (FLUX.1-schnell, Apache-2.0 — 背景插画)
+├── appicons/       make_icons.py  (备用 App 图标 = 底图 + 换装 SVG)
 ├── asc/            asc_upload.py, app_metadata.json, README.md, requirements.txt
 └── screenshots/    capture_raw.sh, make_captioned.py
 ```
@@ -42,7 +43,8 @@ tools/
 - **Localization**: All user-facing strings via `String(localized: "#keyName")`. Keys prefixed with `#`. Six languages: `en`, `zh-Hans`, `zh-Hant`, `ja`, `ko`, `es`. Copy that lives in Swift rather than the catalog — the 30 writing prompts, the DEBUG demo diary text — is keyed by `AppLanguage` (`Services/AppLanguage.swift`), which resolves the bundle's chosen localization and distinguishes Hans from Hant. Add a language: `knownRegions` in `project.pbxproj`, a locale in `Localizable.xcstrings`, plus a row in each `AppLanguage`-keyed table.
 - **Date formats**: `"M-d-yyyy"` for diary date keys, `"M-yyyy"` for month queries, `"EEEE, MMMM d"` for display.
 - **CloudKit**: `CloudKitService` is `@MainActor` with `@Published` properties (`diaryDates`, `diaryCache`). `diaryCache` maps `[String: DiaryCacheEntry]` (text + mood + photoFileURL). Local cache is updated before CloudKit calls so data persists even when iCloud is unavailable.
-- **Navigation**: `RootView` owns `@StateObject CloudKitService` and checks `horizontalSizeClass`. iPhone (`.compact`): single `NavigationStack` with `CalendarView` → `DiaryEditorView` via `.navigationDestination`. iPad (`.regular`): `CalendarView` renders an `HStack` split layout — left pane (calendar + preview, max 420pt) and right pane (always-visible `DiaryEditorView` keyed by `.id(dateKey)` for auto-save on date switch). iPad editor has a manual Save button in toolbar.
+- **Navigation**: `RootView` owns `@StateObject CloudKitService` and always renders one `CalendarView`, which branches on `horizontalSizeClass` itself — never branch in `RootView`, or a size-class change (iPhone Duo fold/unfold) rebuilds `CalendarView` and loses the selected day/month. iPhone (`.compact`): `phoneBody` owns its `NavigationStack`, `CalendarView` → `DiaryEditorView` via `.navigationDestination`. iPad (`.regular`): `HStack` split — left pane (calendar + preview, max 420pt, or exactly up to the fold on an open iPhone Duo via `reservedRegions(kind: .division)`) and right pane (always-visible `DiaryEditorView` keyed by `.id(dateKey)`). The editor saves whenever it disappears (Back, date switch, fold) and on backgrounding; Save button is still there.
+- **iPhone Duo** (iOS 27.1): left pane needs `toolbarVerticalBehavior(.disabled)` — otherwise its hidden-bar `NavigationStack` still reserves ~100pt of vertical-toolbar strip. Simulator UI is `Xcode.app/Contents/Applications/DeviceHub.app` (no Simulator.app); posture buttons sit under the device. Screenshot the inner display with `simctl io … screenshot --display=<inner UUID from simctl io enumerate>`.
 - **Mood**: Emoji-based mood picker in editor. Mood stored as optional String in CloudKit "Diary" record (`mood` field).
 - **Photos**: CKAsset-based photo attachments. Photos compressed to JPEG 0.7 + max 1920px. Cached locally via `PhotoCacheService`.
 - **Widget**: SharedDataStore writes to App Groups (`group.greenCross.NoDiary`) for widget data sharing. Widget target must be created via Xcode GUI.
@@ -70,6 +72,13 @@ tools/
   (保留原来的 0.3 视差),免费版继续用代码画的天空+草坡。
   **不做纯自动按月切换**:南半球会完全反过来,所以做成可手选,`.auto` 只是默认。
 - **给小羊起名字** —— `sheepName_<id>` 存 UserDefaults,和 `sheepCostume_<id>` 同一套。
+- **装扮(2.3.2)** —— 把 Pro 放到用户本来就在的地方(数据:日历 135 次、编辑器 104 次,羊群页只有 12 次):
+  - 心情小羊戴换装:`DressedMoodSheep`(日历格子 12px、预览卡、心情选择),位置表是
+    `SheepCostume.headPlacement`。`SheepMoodIcon` 本身不动 —— 它也编进了 widget。
+  - 备用 App 图标 8 个:`tools/appicons/make_icons.py` 读同一张 `headPlacement` 表把换装合成到图标上
+    (图标小羊和 SheepMoodIcon 是同一套几何)。新增图标要同时改 `ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES`。
+  - 编辑器信纸 `PaperTheme`(点阵/方格/牛皮纸/信笺/午夜),午夜强制深色,导航栏要单独设 `toolbarColorScheme`。
+  - 免费用户可以随便试(预览实时变),只有"保留"要 Pro。入口:日历顶栏 👕、设置、编辑器 🎨。
 
 ## 美术管线(tools/artgen)
 
@@ -116,7 +125,7 @@ xcodebuild -project NoNote.xcodeproj -scheme NoDiary \
 
 ## Xcode Project File
 
-New `.swift` files use IDs in the `A1000000000000000000000X` / `B1000000000000000000000X` pattern in `project.pbxproj`. Next available: `A10000000000000000000031` / `B10000000000000000000031`. Group IDs: Models `C10000000000000000000002`, Services `C10000000000000000000003`, Views `C10000000000000000000004`.
+New `.swift` files use IDs in the `A1000000000000000000000X` / `B1000000000000000000000X` pattern in `project.pbxproj`. Next available: `A10000000000000000000035` / `B10000000000000000000035`. Group IDs: Models `C10000000000000000000002`, Services `C10000000000000000000003`, Views `C10000000000000000000004`.
 
 ## Future Features (Prioritized)
 

@@ -21,7 +21,7 @@ final class SyncedSettings: ObservableObject {
 
     /// Keys we own. Anything with one of these prefixes participates in sync.
     private static let ownedPrefixes = ["sheepCostume_", "sheepName_"]
-    private static let ownedKeys = ["pastureSeason"]
+    private static let ownedKeys = ["pastureSeason", "paperTheme", "moodSheepCostume"]
 
     private let cloud = NSUbiquitousKeyValueStore.default
     private let local = UserDefaults.standard
@@ -58,6 +58,24 @@ final class SyncedSettings: ObservableObject {
         get { string(forKey: "pastureSeason") ?? PastureSeason.auto.rawValue }
         set {
             set(newValue, forKey: "pastureSeason")
+            objectWillChange.send()
+        }
+    }
+
+    /// The editor paper. Read through `PaperTheme`; only applied while Pro.
+    var paperTheme: PaperTheme {
+        get { string(forKey: "paperTheme").flatMap(PaperTheme.init(rawValue:)) ?? .plain }
+        set {
+            set(newValue == .plain ? nil : newValue.rawValue, forKey: "paperTheme")
+            objectWillChange.send()
+        }
+    }
+
+    /// What the mood sheep in the calendar, preview card and mood picker wear. Only applied while Pro.
+    var moodSheepCostume: SheepCostume {
+        get { string(forKey: "moodSheepCostume").flatMap(SheepCostume.init(rawValue:)) ?? .none }
+        set {
+            set(newValue == .none ? nil : newValue.rawValue, forKey: "moodSheepCostume")
             objectWillChange.send()
         }
     }

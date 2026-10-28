@@ -52,8 +52,14 @@ private struct PhotoDropDelegate: DropDelegate {
 struct DiaryEditorView: View {
     let date: Date
     @ObservedObject var cloudKit: CloudKitService
+    @ObservedObject var storeService: StoreService
+    /// Shown as the always-open right pane of the split layout rather than pushed: there is
+    /// nothing to go back to, so it never dismisses itself.
+    var isPane = false
+    @ObservedObject private var synced = SyncedSettings.shared
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.horizontalSizeClass) private var hSizeClass
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.scenePhase) private var scenePhase
     @Environment(\.requestReview) private var requestReview
     @State private var text: String = ""
     @State private var mood: String? = nil
@@ -61,6 +67,8 @@ struct DiaryEditorView: View {
     @State private var showError = false
     @State private var errorMessage = ""
     @State private var showDeleteConfirmation = false
+    /// Set once the entry is deleted, so leaving doesn't save the unsaved edits straight back.
+    @State private var isDeleted = false
     @FocusState private var isEditorFocused: Bool
 
     // Multi-photo state
@@ -80,6 +88,13 @@ struct DiaryEditorView: View {
     @State private var originalWeather: String? = nil
     @State private var originalPhotoURLs: [URL] = []
     @AppStorage("writingPromptsEnabled") private var promptsEnabled = true
+    @State private var showPaperPicker = false
+    /// The paper being tried in the picker; wins over the saved one while the sheet is open.
+    @State private var paperPreview: PaperTheme?
+
+    private var paper: PaperTheme {
+        paperPreview ?? (isPro ? synced.paperTheme : .plain)
+    }
 
     private var hasExistingEntry: Bool {
         !originalText.isEmpty
@@ -93,17 +108,31 @@ struct DiaryEditorView: View {
         return currentURLs != originalPhotoURLs
     }
 
-    private var titleString: String {
+    private var titleString: String { formattedDate("EEEE, MMMM d") }
+
+    private func formattedDate(_ format: String) -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "EEEE, MMMM d"
+        formatter.dateFormat = format
         return formatter.string(from: date)
+    }
+
+    /// The full date when there's room, else the short one. A narrow pane (iPhone Duo open)
+    /// cut the full one to "Wednesday,…", or dropped it altogether next to the toolbar buttons.
+    private var titleView: some View {
+        ViewThatFits(in: .horizontal) {
+            Text(titleString)
+            Text(formattedDate("EEE, MMM d"))
+            Text(formattedDate("MMM d"))
+        }
+        .font(.headline)
+        .lineLimit(1)
     }
 
     private let photoGridColumns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 3)
 
     var body: some View {
         ZStack {
-            Color.surface.ignoresSafeArea()
+            PaperBackground(theme: paper).ignoresSafeArea()
 
             VStack(spacing: 0) {
                 // Mood picker
@@ -119,14 +148,14 @@ struct DiaryEditorView: View {
                 // Text editor with prompt overlay
                 ZStack(alignment: .topLeading) {
                     TextEditor(text: $text)
-                        .font(.custom(AppFonts.regular, size: 16))
-                        .foregroundColor(.textPrimary)
+                        .font(paper.font(size: 16))
+                        .foregroundColor(paper.ink)
                         .scrollContentBackground(.hidden)
                         .focused($isEditorFocused)
 
                     if text.isEmpty && !hasExistingEntry && promptsEnabled {
                         Text(WritingPromptService.promptForDate(date))
-                            .font(.custom(AppFonts.regular, size: 16))
+                            .font(paper.font(size: 16))
                             .foregroundColor(.textSecondary.opacity(0.5))
                             .padding(.horizontal, 5)
                             .padding(.vertical, 8)
@@ -153,11 +182,29 @@ struct DiaryEditorView: View {
                 LoadingOverlay()
             }
         }
+        .environment(\.colorScheme, paper.forcedColorScheme ?? colorScheme)
+        // The environment override stops at the navigation bar; without this, midnight
+        // paper in light mode had a dark title and dark buttons on a dark page.
+        .toolbarBackground(paper.forcedColorScheme == nil ? .automatic : .visible, for: .navigationBar)
+        .toolbarBackground(paper.paper, for: .navigationBar)
+        .toolbarColorScheme(paper.forcedColorScheme, for: .navigationBar)
         .navigationTitle(titleString)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .principal) {
+                titleView
+            }
             ToolbarItem(placement: .navigationBarTrailing) {
                 HStack(spacing: 16) {
+                    Button {
+                        isEditorFocused = false
+                        showPaperPicker = true
+                    } label: {
+                        Image(systemName: "paintpalette")
+                            .font(.system(size: 17))
+                            .foregroundColor(.textPrimary)
+                    }
+                    .accessibilityLabel(String(localized: "#paper"))
                     Button(action: {
                         isEditorFocused = false
                         performSave()
@@ -181,6 +228,15 @@ struct DiaryEditorView: View {
                 }
             }
         }
+        #if DEBUG
+        // Screenshot/QA: -DemoScreen paper opens the editor with the paper picker up.
+        .task {
+            guard UserDefaults.standard.string(forKey: "DemoScreen") == "paper" else { return }
+            try? await Task.sleep(for: .seconds(0.6))
+            isEditorFocused = false
+            showPaperPicker = true
+        }
+        #endif
         .onAppear {
             text = cloudKit.diaryText(for: date)
             let entry = cloudKit.diaryCacheEntry(for: date)
@@ -221,10 +277,14 @@ struct DiaryEditorView: View {
             }
         }
         .onDisappear {
-            // iPad: auto-save on date switch since there's no back button
-            if hSizeClass == .regular {
-                saveIfNeeded()
-            }
+            // Leaving always keeps what was written: Back on iPhone, a date switch on iPad,
+            // and an iPhone Duo fold or unfold, which swaps the whole layout out from under
+            // the editor without the user ever pressing anything.
+            saveIfNeeded()
+        }
+        .onChange(of: scenePhase) { _, phase in
+            // The app can be killed from the background without the editor ever disappearing.
+            if phase == .background { saveIfNeeded() }
         }
         .onChange(of: cloudKit.diaryText(for: date)) { newText in
             // Update editor when iCloud sync brings new data, but only if user has no local edits
@@ -253,13 +313,19 @@ struct DiaryEditorView: View {
                 selectedPhotoItems = []
             }
         }
+        .sheet(isPresented: $showPaperPicker, onDismiss: { paperPreview = nil }) {
+            PaperPickerView(storeService: storeService, preview: $paperPreview)
+                .presentationDetents([.height(isPro ? 190 : 330)])
+                // The editor behind is the preview, so leave it visible and scrollable.
+                .presentationBackgroundInteraction(.enabled)
+        }
         .alert(String(localized: "#oops"), isPresented: $showError) {
             Button(String(localized: "#ok"), role: .cancel) {
-                if hSizeClass != .regular { dismiss() }
+                if !isPane { dismiss() }
             }
             Button(String(localized: "#dontShowAlert")) {
                 UserDefaults.standard.set(true, forKey: "dontShowAlert")
-                if hSizeClass != .regular { dismiss() }
+                if !isPane { dismiss() }
             }
         } message: {
             Text(errorMessage)
@@ -363,7 +429,7 @@ struct DiaryEditorView: View {
     }
 
     private func saveIfNeeded() {
-        guard hasChanges, hasContent else { return }
+        guard hasChanges, hasContent, !isDeleted else { return }
         performSave()
     }
 
@@ -416,15 +482,16 @@ struct DiaryEditorView: View {
     }
 
     private func deleteDiary() {
+        isDeleted = true
         isLoading = true
         Task {
             do {
                 try await cloudKit.deleteDiary(date: date)
                 isLoading = false
-                if hSizeClass != .regular { dismiss() }
+                if !isPane { dismiss() }
             } catch {
                 isLoading = false
-                if hSizeClass != .regular { dismiss() }
+                if !isPane { dismiss() }
             }
         }
     }

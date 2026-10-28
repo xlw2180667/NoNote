@@ -14,6 +14,7 @@ struct CalendarView: View {
     @State private var errorMessage = ""
     @State private var showSearch = false
     @State private var showStats = false
+    @State private var showDressUp = false
     @State private var showMonthPicker = false
     #if DEBUG
     @State private var showDemoFlock = false
@@ -30,13 +31,18 @@ struct CalendarView: View {
         return f
     }()
 
+    /// Narrower than this, the calendar and the editor share the screen by navigation instead.
+    private static let minSplitWidth: CGFloat = 700
+
     private var selectedDateDiary: String {
         cloudKit.diaryText(for: selectedDate)
     }
 
     var body: some View {
-        Group {
-            if hSizeClass == .regular {
+        GeometryReader { proxy in
+            // Width, not just size class: an open iPhone Duo held upright is "regular" at 669pt,
+            // and two 330pt panes there lost the editor's title and stacked "Today" letter by letter.
+            if hSizeClass == .regular && proxy.size.width >= Self.minSplitWidth {
                 iPadBody
             } else {
                 phoneBody
@@ -48,7 +54,7 @@ struct CalendarView: View {
             if let screen = UserDefaults.standard.string(forKey: "DemoScreen") {
                 try? await Task.sleep(for: .seconds(0.8))
                 switch screen {
-                case "editor": showEditor = true
+                case "editor", "paper": showEditor = true
                 case "stats":
                     demoShowLastMonth()
                     showDemoStats = true
@@ -58,6 +64,7 @@ struct CalendarView: View {
                 case "import": showDemoImport = true
                 case "costumes": showDemoCostumes = true
                 case "monthpicker": showMonthPicker = true
+                case "dressup": showDressUp = true
                 case "lastMonth": demoShowLastMonth()
                 default: break
                 }
@@ -76,6 +83,19 @@ struct CalendarView: View {
             }
         } message: {
             Text(errorMessage)
+        }
+        .sheet(isPresented: $showDressUp) {
+            NavigationStack {
+                AppearanceView(storeService: storeService)
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button { showDressUp = false } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundColor(.textSecondary)
+                            }
+                        }
+                    }
+            }
         }
         .sheet(isPresented: $showSearch) {
             SearchView(cloudKit: cloudKit) { dateString in
@@ -122,55 +142,88 @@ struct CalendarView: View {
     // MARK: - iPhone Layout
 
     private var phoneBody: some View {
-        ZStack(alignment: .bottomTrailing) {
-            VStack(spacing: 12) {
-                topBar
-                StreakBadgeView(diaryDates: cloudKit.diaryDates)
-                FlockBannerView(diaryDates: cloudKit.diaryDates, storeService: storeService)
-                calendarCard(dayCellHeight: 40)
-                diarySection
-                Spacer()
-            }
-            .padding(.horizontal, 16)
+        NavigationStack {
+            ZStack(alignment: .bottomTrailing) {
+                // Scrolls only when it doesn't fit: on short screens (SE, the folded iPhone Duo)
+                // the preview card used to end up under the pencil button, out of reach.
+                ScrollView {
+                    VStack(spacing: 12) {
+                        topBar
+                        StreakBadgeView(diaryDates: cloudKit.diaryDates)
+                        FlockBannerView(diaryDates: cloudKit.diaryDates, storeService: storeService)
+                        calendarCard(dayCellHeight: 40)
+                        diarySection(opensEditor: true)
+                    }
+                    .padding(.horizontal, 16)
+                    // Room to scroll the last card clear of the pencil button.
+                    .padding(.bottom, 88)
+                }
+                .scrollBounceBehavior(.basedOnSize)
 
-            fab
-        }
-        .background(Color.surface.ignoresSafeArea())
-        .navigationBarHidden(true)
-        .navigationDestination(isPresented: $showEditor) {
-            DiaryEditorView(date: selectedDate, cloudKit: cloudKit)
+                fab
+            }
+            .background(Color.surface.ignoresSafeArea())
+            .navigationBarHidden(true)
+            .navigationDestination(isPresented: $showEditor) {
+                DiaryEditorView(date: selectedDate, cloudKit: cloudKit, storeService: storeService)
+            }
         }
     }
 
     // MARK: - iPad Layout
 
     private var iPadBody: some View {
-        HStack(spacing: 0) {
-            // Left pane: calendar + preview
-            NavigationStack {
-                VStack(spacing: 12) {
-                    topBar
-                    StreakBadgeView(diaryDates: cloudKit.diaryDates)
-                    FlockBannerView(diaryDates: cloudKit.diaryDates, storeService: storeService)
-                    calendarCard(dayCellHeight: 48)
-                    diarySection
-                    Spacer()
+        GeometryReader { proxy in
+            let fold = verticalFold(in: proxy)
+            HStack(spacing: 0) {
+                // Left pane: calendar + preview
+                NavigationStack {
+                    // Scrolls only when it doesn't fit: with the keyboard up on an open
+                    // iPhone Duo, the pane is shorter than the calendar and was pushed off the top.
+                    ScrollView {
+                        VStack(spacing: 12) {
+                            topBar
+                            StreakBadgeView(diaryDates: cloudKit.diaryDates)
+                            FlockBannerView(diaryDates: cloudKit.diaryDates, storeService: storeService)
+                            calendarCard(dayCellHeight: 48)
+                            // The editor is already beside it.
+                            diarySection(opensEditor: false)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 16)
+                    }
+                    .scrollBounceBehavior(.basedOnSize)
+                    .background(Color.surface.ignoresSafeArea())
+                    .navigationBarHidden(true)
                 }
-                .padding(.horizontal, 16)
-                .background(Color.surface.ignoresSafeArea())
-                .navigationBarHidden(true)
-            }
-            .frame(maxWidth: 420)
+                .noVerticalToolbar()
+                .frame(width: fold?.minX)
+                .frame(maxWidth: fold == nil ? 420 : nil)
 
-            Divider()
+                // On an open iPhone Duo the panes meet at the fold, so neither the calendar
+                // nor a line of the diary sits across the crease.
+                if let fold, fold.width > 0 {
+                    Color.surface.frame(width: fold.width)
+                } else {
+                    Divider()
+                }
 
-            // Right pane: editor
-            NavigationStack {
-                DiaryEditorView(date: selectedDate, cloudKit: cloudKit)
-                    .id(dateFormatter.string(from: selectedDate))
+                // Right pane: editor
+                NavigationStack {
+                    DiaryEditorView(date: selectedDate, cloudKit: cloudKit, storeService: storeService, isPane: true)
+                        .id(dateFormatter.string(from: selectedDate))
+                }
             }
         }
         .background(Color.surface.ignoresSafeArea())
+    }
+
+    /// The crease of an open iPhone Duo, when it runs top to bottom through this view.
+    private func verticalFold(in proxy: GeometryProxy) -> CGRect? {
+        guard #available(iOS 27.1, *) else { return nil }
+        return proxy.reservedRegions(kind: .division)
+            .map(\.frame)
+            .first { $0.height > $0.width && $0.minX > 0 && $0.maxX < proxy.size.width }
     }
 
     // MARK: - Top Bar
@@ -180,8 +233,18 @@ struct CalendarView: View {
             Text("NoDiary")
                 .font(.custom(AppFonts.bold, size: 24))
                 .foregroundColor(.textPrimary)
+                // The wordmark never wraps; the spacer gives way first.
+                .lineLimit(1)
+                .fixedSize()
 
             Spacer()
+
+            Button(action: { showDressUp = true }) {
+                Image(systemName: "tshirt")
+                    .font(.system(size: 17))
+                    .foregroundColor(.textPrimary)
+            }
+            .accessibilityLabel(String(localized: "#dressUp"))
 
             Button(action: { showSearch = true }) {
                 Image(systemName: "magnifyingglass")
@@ -206,6 +269,8 @@ struct CalendarView: View {
             Button(action: goToToday) {
                 Text(String(localized: "#today"))
                     .font(.custom(AppFonts.medium, size: 14))
+                    .lineLimit(1)
+                    .fixedSize()
                     .foregroundColor(.accent)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 6)
@@ -281,7 +346,7 @@ struct CalendarView: View {
                     if hasDiary && state.belongsToDisplayedMonth {
                         HStack(spacing: 2) {
                             if let mood = mood, SheepMood.isSheepMood(mood) {
-                                SheepMoodIcon(mood: mood, size: 12)
+                                DressedMoodSheep(mood: mood, size: 12)
                             } else if let mood = mood {
                                 Text(mood)
                                     .font(.system(size: 10))
@@ -317,12 +382,12 @@ struct CalendarView: View {
 
     // MARK: - Diary Section
 
-    private var diarySection: some View {
+    private func diarySection(opensEditor: Bool) -> some View {
         Group {
             if selectedDateDiary.isEmpty {
                 EmptyStateView()
                     .onTapGesture {
-                        if hSizeClass != .regular { showEditor = true }
+                        if opensEditor { showEditor = true }
                     }
             } else {
                 let entry = cloudKit.diaryCacheEntry(for: selectedDate)
@@ -331,7 +396,7 @@ struct CalendarView: View {
                 let photoURLs = entry?.photoFileURLs ?? []
                 DiaryPreviewCard(date: selectedDate, diaryText: selectedDateDiary, mood: mood, weather: weather, photoURLs: photoURLs)
                     .onTapGesture {
-                        if hSizeClass != .regular { showEditor = true }
+                        if opensEditor { showEditor = true }
                     }
             }
         }
@@ -411,15 +476,32 @@ struct CalendarView: View {
         await fetchMonth(monthAndYear: "\(month)-\(year)")
     }
 
+    /// Pauses before each quiet retry of a transient fetch error.
+    private static let fetchRetryDelays: [Duration] = [.seconds(2), .seconds(5)]
+
     private func fetchMonth(monthAndYear: String) async {
-        do {
-            try await cloudKit.fetchDiaries(monthAndYear: monthAndYear)
-        } catch {
-            // Counted even when the alert is muted: the month's sheep are missing either way.
-            UsageStats.shared.recordFailure(DiaryFailure.icloudFetch)
-            if !UserDefaults.standard.bool(forKey: "dontShowAlert") {
-                errorMessage = String(localized: "#cannotConnectToICloud")
-                showError = true
+        // Retried quietly first: on a mainland-China install the first requests fail until the
+        // "allow network data" prompt is answered, and those new users were greeted with
+        // "can't connect to iCloud" on day one while writing worked fine from the local cache.
+        var retries = Self.fetchRetryDelays[...]
+        while true {
+            do {
+                try await cloudKit.fetchDiaries(monthAndYear: monthAndYear)
+                return
+            } catch {
+                let reason = DiaryFailureReason(cloudKitError: error)
+                if reason.isTransient, let delay = retries.popFirst() {
+                    try? await Task.sleep(for: delay)
+                    if Task.isCancelled { return }
+                    continue
+                }
+                // Counted even when the alert is muted: the month's sheep are missing either way.
+                UsageStats.shared.recordFailure(DiaryFailure.icloudFetch, reason)
+                if !UserDefaults.standard.bool(forKey: "dontShowAlert") {
+                    errorMessage = String(localized: "#cannotConnectToICloud")
+                    showError = true
+                }
+                return
             }
         }
     }
@@ -428,5 +510,18 @@ struct CalendarView: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "MMMM yyyy"
         return formatter.string(from: date)
+    }
+}
+
+private extension View {
+    /// The calendar pane hides its navigation bar, but on iPhone Duo (iOS 27.1) a navigation
+    /// stack still keeps a strip down its trailing edge for a vertical toolbar — 84pt of empty
+    /// space beside the calendar, which squeezed the top bar until "Today" wrapped.
+    @ViewBuilder func noVerticalToolbar() -> some View {
+        if #available(iOS 27.1, *) {
+            toolbarVerticalBehavior(.disabled)
+        } else {
+            self
+        }
     }
 }

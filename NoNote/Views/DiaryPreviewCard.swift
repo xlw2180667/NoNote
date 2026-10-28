@@ -26,7 +26,7 @@ struct DiaryPreviewCard: View {
                     .foregroundColor(.textPrimary)
 
                 if let mood = mood, SheepMood.isSheepMood(mood) {
-                    SheepMoodIcon(mood: mood, size: 28)
+                    DressedMoodSheep(mood: mood, size: 28)
                 } else if let mood = mood {
                     Text(mood)
                         .font(.system(size: 16))
